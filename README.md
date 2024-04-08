@@ -26,7 +26,7 @@ pip install g4f
 ## Usage
 
 1. Place your text prompts in a file named `prompts.txt`, with one prompt per line.
-2. Run the script with Python.
+2. Run probat.py.
 3. The script will process all prompts and save the outputs in `output.txt`.
 
 ## Configuration
