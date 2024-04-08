@@ -13,7 +13,7 @@ Then intall Anthropic SDK：
 ```
 pip install anthropic -U
 ```
-Then the instruction of [Usage](https://github.com/cbdb-project/processing-prompts-by-batch/tree/main#usage) below
+Then follow the instruction of [Usage](https://github.com/cbdb-project/processing-prompts-by-batch/tree/main#usage) below
 
 ## Features
 
