@@ -1,7 +1,6 @@
 import os
 import random
 import time
-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 import anthropic
 
 with open("api_key.txt", "r") as file:
@@ -51,8 +50,8 @@ def clean_text(text):
 
 # configuration
 TEMP_BATCH_SIZE = 10
-TIMEOUT = 3
-TIMEOUT_OFFSET = 1
+TIMEOUT = 0.5
+TIMEOUT_OFFSET = 0.5
 
 if os.path.exists("output.txt"):
     os.remove("output.txt")
