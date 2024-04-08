@@ -1,6 +1,6 @@
 # Processing Prompts by Batch (probat)
 
-Processing Prompts by Batch is a Python script designed to automate the process of sending batches of prompts to the [G4F](https://github.com/xtekky/gpt4free) API (an illustrative API representing services similar to OpenAI's GPT-3.5 models) and collecting their responses. It reads prompts from a text file, sends them to the G4F API, and saves the processed output in another text file. The script is useful for bulk processing of text data, leveraging the G4F API for text generation or transformation tasks.
+Processing Prompts by Batch is a Python script designed to automate the process of sending batches of prompts to the [G4F](https://github.com/xtekky/gpt4free) API (an illustrative API representing services similar to OpenAI's GPT-3.5 models. It's FREE and LEGAL!) and collecting their responses. It reads prompts from a text file, sends them to the G4F API, and saves the processed output in another text file. The script is useful for bulk processing of text data, leveraging the G4F API for text generation or transformation tasks.
 
 ## Features
 
@@ -13,7 +13,7 @@ Processing Prompts by Batch is a Python script designed to automate the process 
 ## Requirements
 
 - Python 3.6 or newer
-- `g4f` Python package (This is a fictional package for the purpose of this example. Replace with the actual package name when implementing).
+- `g4f` Python package
 
 ## Installation
 
