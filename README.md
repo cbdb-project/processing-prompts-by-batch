@@ -6,26 +6,30 @@ Processing Prompts by Batch is a Python script designed to automate the process 
 
 Currently, we are using the Anthropic API instead. You can obtain a free Anthropic API key by visiting https://www.anthropic.com/api. After acquiring it, save the key to `api_key.txt` in the root directory of the current repository.
 
-## Features
+![image](https://github.com/cbdb-project/processing-prompts-by-batch/assets/8538710/f38a0f0f-732d-4f71-bdbd-b2054831b92d)
 
-- **Batch Processing:** Process multiple prompts in batches, reducing the overhead of sending individual requests.
-- **Customizable Timing:** Configurable timeouts between API calls to prevent rate limiting.
-- **Text Cleaning:** Cleans up the output text by replacing newline characters with HTML line breaks for easier web display.
-- **Dynamic Batch Sizing:** Adjusts the batch size based on the number of prompts to ensure efficient processing.
-- **Output Management:** Automatically creates an output file for the processed prompts and ensures no duplication by removing any existing output file at the start.
 
-## Requirements
+~~## Features~~
+~~~~
+~~- **Batch Processing:** Process multiple prompts in batches, reducing the overhead of sending individual requests.~~
+~~- **Customizable Timing:** Configurable timeouts between API calls to prevent rate limiting.~~
+~~- **Text Cleaning:** Cleans up the output text by replacing newline characters with HTML line breaks for easier web display.~~
+~~- **Dynamic Batch Sizing:** Adjusts the batch size based on the number of prompts to ensure efficient processing.~~
+~~- **Output Management:** Automatically creates an output file for the processed prompts and ensures no duplication by removing any existing output file at the start.~~
+~~~~
+~~## Requirements~~
+~~~~
+~~- Python 3.6 or newer~~
+~~- `g4f` Python package~~
+~~~~
+~~## Installation~~
+~~~~
+~~Before running the script, ensure you have Python installed on your system. You can then install the required `g4f` package using pip:~~
+~~~~
+~~```bash~~
+~~pip install -U g4f~~
+~~```~~
 
-- Python 3.6 or newer
-- `g4f` Python package
-
-## Installation
-
-Before running the script, ensure you have Python installed on your system. You can then install the required `g4f` package using pip:
-
-```bash
-pip install -U g4f
-```
 
 ## Usage
 
