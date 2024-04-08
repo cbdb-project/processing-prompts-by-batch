@@ -9,14 +9,14 @@ Currently, we are using the Anthropic API instead. You can obtain a free Anthrop
 ![image](https://github.com/cbdb-project/processing-prompts-by-batch/assets/8538710/f38a0f0f-732d-4f71-bdbd-b2054831b92d)
 
 
-~~## Features~~
-~~~~
-~~- **Batch Processing:** Process multiple prompts in batches, reducing the overhead of sending individual requests.~~
-~~- **Customizable Timing:** Configurable timeouts between API calls to prevent rate limiting.~~
-~~- **Text Cleaning:** Cleans up the output text by replacing newline characters with HTML line breaks for easier web display.~~
-~~- **Dynamic Batch Sizing:** Adjusts the batch size based on the number of prompts to ensure efficient processing.~~
-~~- **Output Management:** Automatically creates an output file for the processed prompts and ensures no duplication by removing any existing output file at the start.~~
-~~~~
+## Features
+
+- **Batch Processing:** Process multiple prompts in batches, reducing the overhead of sending individual requests.
+- **Customizable Timing:** Configurable timeouts between API calls to prevent rate limiting.
+- **Text Cleaning:** Cleans up the output text by replacing newline characters with HTML line breaks for easier web display.
+- **Dynamic Batch Sizing:** Adjusts the batch size based on the number of prompts to ensure efficient processing.
+- **Output Management:** Automatically creates an output file for the processed prompts and ensures no duplication by removing any existing output file at the start.
+
 ~~## Requirements~~
 ~~~~
 ~~- Python 3.6 or newer~~
