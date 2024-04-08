@@ -4,7 +4,7 @@ import time
 
 
 def call_g4f(text):
-    # pip install g4f
+    # pip install -U g4f
     from g4f.client import Client
 
     text_utf8 = text.encode("utf-8")
