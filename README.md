@@ -20,7 +20,7 @@ Processing Prompts by Batch is a Python script designed to automate the process 
 Before running the script, ensure you have Python installed on your system. You can then install the required `g4f` package using pip:
 
 ```bash
-pip install g4f
+pip install -U g4f
 ```
 
 ## Usage
