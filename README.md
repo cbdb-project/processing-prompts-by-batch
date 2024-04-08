@@ -37,10 +37,6 @@ You can adjust the following configurations at the beginning of the script:
 - `TIMEOUT`: Base timeout in seconds between batches (default: 0.5 seconds).
 - `TIMEOUT_OFFSET`: Additional random timeout offset to prevent consistent timing patterns (default: 0.5).
 
-## Limitations
-
-- The script is designed to work with the `g4f` package and the G4F API. Ensure compatibility and proper installation before use.
-- The batch size and timeouts may need adjustment based on the API's rate limits and your specific requirements.
 
 ## Disclaimer
 
