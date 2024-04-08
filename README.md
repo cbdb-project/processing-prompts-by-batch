@@ -40,7 +40,7 @@ You can adjust the following configurations at the beginning of the script:
 
 ## Disclaimer
 
-This script is provided as-is, and it is a generic template for interacting with text generation APIs. Always adhere to the API provider's usage policies and guidelines.
+Always adhere to the API provider's usage policies and guidelines.
 
 ## License
 
