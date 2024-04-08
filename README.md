@@ -4,10 +4,16 @@ Processing Prompts by Batch is a Python script designed to automate the process 
 
 ## NOTICE!!!
 
-Currently, we are using the Anthropic API instead of G4F. You can obtain a free Anthropic API key by visiting https://www.anthropic.com/api. After acquiring it, save the key to `api_key.txt` in the root directory of the current repository.
+Currently, we are using the free Anthropic API (claude 3 opus) instead of G4F. You can obtain a free Anthropic API key by visiting https://www.anthropic.com/api. After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
 
 ![image](https://github.com/cbdb-project/processing-prompts-by-batch/assets/8538710/f38a0f0f-732d-4f71-bdbd-b2054831b92d)
 
+Then intall Anthropic SDK：
+
+```
+pip install anthropic -U
+```
+Then the instruction of **Usage** below
 
 ## Features
 
