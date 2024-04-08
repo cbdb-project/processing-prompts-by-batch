@@ -2,6 +2,10 @@
 
 Processing Prompts by Batch is a Python script designed to automate the process of sending batches of prompts to the [G4F](https://github.com/xtekky/gpt4free) API (based on OpenAI's GPT-3.5 API. It's FREE and LEGAL!) and collecting their responses. It reads prompts from a text file, sends them to the G4F API, and saves the processed output in another text file. The script is useful for bulk processing of text data, leveraging the G4F API for text generation or transformation tasks.
 
+## NOTICE!!!
+
+Currently, we are using the Anthropic API instead. You can obtain a free Anthropic API key by visiting https://www.anthropic.com/api. After acquiring it, save the key to `api_key.txt` in the root directory of the current repository.
+
 ## Features
 
 - **Batch Processing:** Process multiple prompts in batches, reducing the overhead of sending individual requests.
