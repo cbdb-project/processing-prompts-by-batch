@@ -17,9 +17,9 @@ Then follow the instruction of [Usage](https://github.com/cbdb-project/processin
 
 ## Branch
 
-https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
+### [Jiajun Zou](https://github.com/jzou19957)'s G4F implement
 
-[Jiajun Zou](https://github.com/jzou19957)'s G4F implement
+https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 
 ## Features
 
