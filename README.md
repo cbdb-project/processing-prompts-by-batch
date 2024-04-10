@@ -15,6 +15,12 @@ pip install anthropic -U
 ```
 Then follow the instruction of [Usage](https://github.com/cbdb-project/processing-prompts-by-batch/tree/main#usage) below
 
+## Forking project
+
+https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
+
+Jiajun Zou's G4F implement
+
 ## Features
 
 - **Batch Processing:** Process multiple prompts in batches, reducing the overhead of sending individual requests.
