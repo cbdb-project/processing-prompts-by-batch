@@ -2,7 +2,7 @@
 
 Processing Prompts by Batch is a Python script designed to automate the process of sending batches of prompts to LLM API and collecting their responses. It reads prompts from a text file, sends them to the LLM API, and saves the processed output in another text file. The script is useful for bulk processing of text data, leveraging the LLM API for text generation or transformation tasks.
 
-## NOTICE!!!
+## NOTICE
 
 Currently, we are using the free Google Gemini Pro 1.5 API. You can obtain a free Google Gemini API key by visiting https://aistudio.google.com/app/apikey. After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
 
@@ -13,13 +13,6 @@ Currently, we are using the free Google Gemini Pro 1.5 API. You can obtain a fre
 - 2 RPM (requests per minute)
 - 32,000 TPM (tokens per minute)
 - 50 RPD (requests per day)
-
-Before running intall the SDK：
-
-```
-pip install -q -U google-generativeai
-```
-Then follow the instruction of [Usage](https://github.com/cbdb-project/processing-prompts-by-batch/tree/main#usage) below
 
 ## Branch
 
@@ -38,11 +31,11 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 ## Requirements
 
 - Python 3.9 or newer
-- `google-generativeai` Python package
+- google-generativeai Python package
 
 ## Installation
 
-Before running the script, ensure you have Python installed on your system. You can then install the required SDK using pip:
+Before running the script, ensure you have Python installed on your system, and then install the required SDK using pip:
 
 ```bash
 pip install -q -U google-generativeai
