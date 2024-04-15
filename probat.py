@@ -9,16 +9,29 @@ with open("api_key.txt", "r") as file:
         api_key=api_key_str,
     )
 
+# Google Gemini
+import google.generativeai as genai
 
-def anthropic(text):
-    message = client.messages.create(
-        model="claude-3-opus-20240229",
-        max_tokens=1024,
-        messages=[{"role": "user", "content": text}],
-    )
-    return message.content[0].text
+genai.configure(api_key=api_key_str)
+model = genai.GenerativeModel("gemini-pro")
 
 
+def gemini(text):
+    response = model.generate_content(text)
+    # return to_markdown(response.text)
+    return response.text
+
+
+# # Glaude-3
+# def anthropic(text):
+#     message = client.messages.create(
+#         model="claude-3-opus-20240229",
+#         max_tokens=1024,
+#         messages=[{"role": "user", "content": text}],
+#     )
+#     return message.content[0].text
+
+# # gpt4free
 # def call_g4f(text, max_retries=3, retry_delay=5):
 #     from g4f.client import Client
 
@@ -51,7 +64,7 @@ def clean_text(text):
 # configuration
 TEMP_BATCH_SIZE = 10
 TIMEOUT = 0.5
-TIMEOUT_OFFSET = 0.5
+TIMEOUT_OFFSET = 30
 
 if os.path.exists("output.txt"):
     os.remove("output.txt")
@@ -71,7 +84,8 @@ for i in range(0, len(prompt_list), TEMP_BATCH_SIZE):
         timeout = TIMEOUT + random.random() * 0.1 * TIMEOUT_OFFSET
         time.sleep(timeout)
         # output_record = call_g4f(prompt[0])
-        output_record = anthropic(prompt[0])
+        # output_record = anthropic(prompt[0])
+        output_record = gemini(prompt[0])
         output_record = clean_text(output_record)
         temp_output_list.append(output_record)
     with open("output.txt", "a", encoding="utf-8") as f:
