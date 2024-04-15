@@ -4,9 +4,7 @@ Processing Prompts by Batch is a Python script designed to automate the process 
 
 ## NOTICE
 
-Currently, we are using the free Google Gemini Pro 1.5 API. You can obtain a free Google Gemini API key by visiting https://aistudio.google.com/app/apikey. After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
-
-![image](https://github.com/cbdb-project/processing-prompts-by-batch/assets/8538710/f38a0f0f-732d-4f71-bdbd-b2054831b92d)
+Currently, we are using the free Google Gemini Pro 1.5 API. 
 
 **Current Google API request limitation**
 
@@ -35,12 +33,14 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 
 ## Installation
 
-Before running the script, ensure you have Python installed on your system, and then install the required SDK using pip:
+1. Before running the script, ensure you have Python installed on your system, and then install the required SDK using pip:
 
 ```bash
 pip install -q -U google-generativeai
 ```
+2. You can obtain a free API key by visiting https://aistudio.google.com/app/apikey. After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
 
+![image](https://github.com/cbdb-project/processing-prompts-by-batch/assets/8538710/f38a0f0f-732d-4f71-bdbd-b2054831b92d)
 
 ## Usage
 
