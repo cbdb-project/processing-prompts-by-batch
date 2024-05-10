@@ -4,13 +4,7 @@ Processing Prompts by Batch is a Python script designed to automate the process 
 
 ## NOTICE
 
-Currently, we are using the free Google Gemini Pro 1.5 API. 
-
-**Current Google API request limitation**
-
-- 2 RPM (requests per minute)
-- 32,000 TPM (tokens per minute)
-- 50 RPD (requests per day)
+Currently, we are using the Deepseek API. 
 
 ## Branch
 
@@ -29,16 +23,16 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 ## Requirements
 
 - Python 3.9 or newer
-- google-generativeai Python package
+- OpenAI package
 
 ## Installation
 
 1. Before running the script, ensure you have Python installed on your system, and then install the required SDK using pip:
 
 ```bash
-pip install -q -U google-generativeai
+pip install openai
 ```
-2. You can obtain a free API key by visiting https://aistudio.google.com/app/apikey. After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
+2. You can obtain a API key by visiting https://platform.deepseek.com. After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
 
 ![image](https://github.com/cbdb-project/processing-prompts-by-batch/assets/8538710/f38a0f0f-732d-4f71-bdbd-b2054831b92d)
 
@@ -54,7 +48,7 @@ You can adjust the following configurations at the beginning of the script:
 
 - `TEMP_BATCH_SIZE`: The number of prompts to process in each batch (default: 10).
 - `TIMEOUT`: Base timeout in seconds between batches (default: 0.5 seconds).
-- `TIMEOUT_OFFSET`: Additional random timeout offset to prevent consistent timing patterns (default: 30).
+- `TIMEOUT_OFFSET`: Additional random timeout offset to prevent consistent timing patterns (default: 0.5).
 
 
 ## Disclaimer
