@@ -1,28 +1,44 @@
 import os
 import random
 import time
-import anthropic
 
 with open("api_key.txt", "r") as file:
     api_key_str = file.read()
-    client = anthropic.Anthropic(
-        api_key=api_key_str,
+
+
+# # Google Gemini
+# import google.generativeai as genai
+
+# genai.configure(api_key=api_key_str)
+# model = genai.GenerativeModel("gemini-pro")
+
+
+# def gemini(text):
+#     response = model.generate_content(text)
+#     # return to_markdown(response.text)
+#     return response.text
+
+
+## Deepseek V2
+from openai import OpenAI
+
+
+def deepseek(text):
+    client = OpenAI(api_key=api_key_str, base_url="https://api.deepseek.com/")
+    response = client.chat.completions.create(
+        model="deepseek-chat",
+        messages=[
+            {"role": "user", "content": text},
+        ],
     )
-
-# Google Gemini
-import google.generativeai as genai
-
-genai.configure(api_key=api_key_str)
-model = genai.GenerativeModel("gemini-pro")
-
-
-def gemini(text):
-    response = model.generate_content(text)
-    # return to_markdown(response.text)
-    return response.text
+    return response.choices[0].message.content
 
 
 # # Glaude-3
+# import anthropic
+# client = anthropic.Anthropic(
+#     api_key=api_key_str,
+# )
 # def anthropic(text):
 #     message = client.messages.create(
 #         model="claude-3-opus-20240229",
@@ -64,7 +80,7 @@ def clean_text(text):
 # configuration
 TEMP_BATCH_SIZE = 10
 TIMEOUT = 0.5
-TIMEOUT_OFFSET = 30
+TIMEOUT_OFFSET = 0.5
 
 if os.path.exists("output.txt"):
     os.remove("output.txt")
@@ -85,7 +101,8 @@ for i in range(0, len(prompt_list), TEMP_BATCH_SIZE):
         time.sleep(timeout)
         # output_record = call_g4f(prompt[0])
         # output_record = anthropic(prompt[0])
-        output_record = gemini(prompt[0])
+        output_record = deepseek(prompt[0])
+        # output_record = gemini(prompt[0])
         output_record = clean_text(output_record)
         temp_output_list.append(output_record)
     with open("output.txt", "a", encoding="utf-8") as f:
