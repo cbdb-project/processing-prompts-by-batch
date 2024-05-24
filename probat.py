@@ -101,7 +101,11 @@ for i in range(0, len(prompt_list), TEMP_BATCH_SIZE):
         time.sleep(timeout)
         # output_record = call_g4f(prompt[0])
         # output_record = anthropic(prompt[0])
-        output_record = deepseek(prompt[0])
+        try:
+            output_record = deepseek(prompt[0])
+        except Exception as e:
+            print(f"Error: {e}")
+            output_record = "Error"
         # output_record = gemini(prompt[0])
         output_record = clean_text(output_record)
         temp_output_list.append(output_record)
