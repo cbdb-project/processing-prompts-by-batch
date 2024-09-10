@@ -7,9 +7,9 @@ with open("api_key.txt", "r") as file:
     api_key_str = file.read()
 
 
-# # Google Gemini
+## Google Gemini
 def gemini(text):
-    response = model.generate_content(text)
+    response = client.generate_content(text)
     # return to_markdown(response.text)
     return response.text
 
@@ -75,6 +75,18 @@ def call_g4f(text, max_retries=3, retry_delay=5):
                 raise
     raise Exception("Maximum retries reached, the service may be unavailable.")
 
+def qwen(text):
+    completion = client.chat.completions.create(
+        model="qwen2-72b-instruct",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": text},
+        ],
+        temperature=0.8,
+        top_p=0.8,
+    )
+    return completion.choices[0].message.content
+
 
 def clean_text(text):
     text = text.replace("\n", "<br />")
@@ -134,7 +146,6 @@ def split_by_threshold(prompt, separators, len_threshold):
 
 def llm_api(text, api_choice):
     if api_choice in api_functions:
-        # Call the corresponding API function
         return api_functions[api_choice](text)
     else:
         raise ValueError(f"Unknown API choice: {api_choice}")
@@ -145,7 +156,7 @@ TIMEOUT = 0.5
 TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".","。",",",", ", "\\n", "\n"]
 LEN_THRESHOLD = 2000
-# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f
+# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen...
 api_choice = "deepseek"
 
 api_functions = {
@@ -154,13 +165,14 @@ api_functions = {
     "openai_harvard": openai_harvard,
     "anthropic": anthropic,
     "call_g4f": call_g4f,
+    "qwen": qwen,
 }
 
 # Initialize LLM
 if api_choice == "gemini":
     import google.generativeai as genai
     genai.configure(api_key=api_key_str)
-    model = genai.GenerativeModel("gemini-pro")
+    client = genai.GenerativeModel("gemini-pro")
 elif api_choice == "deepseek":
     from openai import OpenAI
     client = OpenAI(api_key=api_key_str, base_url="https://api.deepseek.com/")
@@ -180,6 +192,13 @@ elif api_choice == "anthropic":
 elif api_choice == "call_g4f":
     from g4f.client import Client
     client = Client()
+elif api_choice == "qwen":
+    from openai import OpenAI
+    os.environ["DASHSCOPE_API_KEY"] = api_key_str
+    client = OpenAI(
+        api_key=os.getenv("DASHSCOPE_API_KEY"),
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    )
 
 if os.path.exists("output.txt"):
     os.remove("output.txt")
