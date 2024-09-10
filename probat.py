@@ -8,24 +8,14 @@ with open("api_key.txt", "r") as file:
 
 
 # # Google Gemini
-# import google.generativeai as genai
-
-# genai.configure(api_key=api_key_str)
-# model = genai.GenerativeModel("gemini-pro")
-
-
-# def gemini(text):
-#     response = model.generate_content(text)
-#     # return to_markdown(response.text)
-#     return response.text
+def gemini(text):
+    response = model.generate_content(text)
+    # return to_markdown(response.text)
+    return response.text
 
 
 ## Deepseek V2
-from openai import OpenAI
-
-
 def deepseek(text):
-    client = OpenAI(api_key=api_key_str, base_url="https://api.deepseek.com/")
     response = client.chat.completions.create(
         model="deepseek-chat",
         messages=[
@@ -34,43 +24,56 @@ def deepseek(text):
     )
     return response.choices[0].message.content
 
+## OpenAI Harvard
+def openai_harvard(text):
+    payload = {
+        "model": model,
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a helpful assistant."
+            },
+            {
+                "role": "user",
+                "content": text
+            }
+        ],
+        "max_tokens": max_tokens
+    }
+    response = requests.post("https://go.apis.huit.harvard.edu/ais-openai-direct/v1/chat/completions", headers=headers, json=payload)
+    response_json = response.json()
+    # print(response_json)
+    return response_json["choices"][0]["message"]["content"]
 
-# # Glaude-3
-# import anthropic
-# client = anthropic.Anthropic(
-#     api_key=api_key_str,
-# )
-# def anthropic(text):
-#     message = client.messages.create(
-#         model="claude-3-opus-20240229",
-#         max_tokens=1024,
-#         messages=[{"role": "user", "content": text}],
-#     )
-#     return message.content[0].text
+# Glaude-3
+def anthropic(text):
+    message = client.messages.create(
+        model="claude-3-opus-20240229",
+        max_tokens=1024,
+        messages=[{"role": "user", "content": text}],
+    )
+    return message.content[0].text
 
-# # gpt4free
-# def call_g4f(text, max_retries=3, retry_delay=5):
-#     from g4f.client import Client
-
-#     client = Client()
-#     for attempt in range(max_retries):
-#         try:
-#             response = client.chat.completions.create(
-#                 model="gpt-3.5-turbo",
-#                 messages=[
-#                     {"role": "user", "content": text},
-#                 ],
-#             )
-#             return response.choices[0].message.content
-#         except Exception as e:
-#             if e.response.status == 503:
-#                 print(
-#                     f"Received a error, attempt {attempt + 1} of {max_retries}. Retrying in {retry_delay} seconds..."
-#                 )
-#                 time.sleep(retry_delay)
-#             else:
-#                 raise
-#     raise Exception("Maximum retries reached, the service may be unavailable.")
+# gpt4free
+def call_g4f(text, max_retries=3, retry_delay=5):
+    for attempt in range(max_retries):
+        try:
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "user", "content": text},
+                ],
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            if e.response.status == 503:
+                print(
+                    f"Received a error, attempt {attempt + 1} of {max_retries}. Retrying in {retry_delay} seconds..."
+                )
+                time.sleep(retry_delay)
+            else:
+                raise
+    raise Exception("Maximum retries reached, the service may be unavailable.")
 
 
 def clean_text(text):
@@ -129,12 +132,54 @@ def split_by_threshold(prompt, separators, len_threshold):
     
     return chunks
 
+def llm_api(text, api_choice):
+    if api_choice in api_functions:
+        # Call the corresponding API function
+        return api_functions[api_choice](text)
+    else:
+        raise ValueError(f"Unknown API choice: {api_choice}")
+
 # configuration
 TEMP_BATCH_SIZE = 10
 TIMEOUT = 0.5
 TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".","。",",",", ", "\\n", "\n"]
 LEN_THRESHOLD = 2000
+# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f
+api_choice = "deepseek"
+
+api_functions = {
+    "gemini": gemini,
+    "deepseek": deepseek,
+    "openai_harvard": openai_harvard,
+    "anthropic": anthropic,
+    "call_g4f": call_g4f,
+}
+
+# Initialize LLM
+if api_choice == "gemini":
+    import google.generativeai as genai
+    genai.configure(api_key=api_key_str)
+    model = genai.GenerativeModel("gemini-pro")
+elif api_choice == "deepseek":
+    from openai import OpenAI
+    client = OpenAI(api_key=api_key_str, base_url="https://api.deepseek.com/")
+elif api_choice == "openai_harvard":
+    import requests
+    model = "gpt-4o"
+    max_tokens = 2048
+    headers = {
+        "api-key": api_key_str,
+        "Content-Type": "application/json",
+        "Accept-Encoding": "gzip, deflate, identity"
+        
+    }
+elif api_choice == "anthropic":
+    import anthropic
+    client = anthropic.Anthropic(api_key=api_key_str)
+elif api_choice == "call_g4f":
+    from g4f.client import Client
+    client = Client()
 
 if os.path.exists("output.txt"):
     os.remove("output.txt")
@@ -172,9 +217,9 @@ for i in range(0, len(prompt_list), TEMP_BATCH_SIZE):
             try:
                 prompt_with_prefix = prompt_prefix + prompt_chunk
                 if output_record == "":
-                    output_record = deepseek(prompt_with_prefix)
+                    output_record = llm_api(prompt_with_prefix, api_choice)
                 else:
-                    output_record = output_record + "<SEP>" + deepseek(prompt_with_prefix)
+                    output_record = output_record + "<SEP>" + llm_api(prompt_with_prefix, api_choice)
             except Exception as e:
                 print(f"Error: {e}")
                 output_record = "Error"
