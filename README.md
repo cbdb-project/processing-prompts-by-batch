@@ -69,11 +69,11 @@ pip install g4f
 
 You can adjust the following configurations at the beginning of the script:
 
-     - `TEMP_BATCH_SIZE`: Number of prompts processed in each batch (default is 10).
-     - `TIMEOUT`: The base delay time between API calls (default is 0.5 seconds).
-     - `TIMEOUT_OFFSET`: The offset for randomizing delay time (default is 0.5).
-     - `LEN_THRESHOLD`: Character length threshold for splitting prompts (default is 2000).
-     - `SEPARATOR_LIST`: List of separators to use when splitting long prompts.
+  - `TEMP_BATCH_SIZE`: Number of prompts processed in each batch (default is 10).
+  - `TIMEOUT`: The base delay time between API calls (default is 0.5 seconds).
+  - `TIMEOUT_OFFSET`: The offset for randomizing delay time (default is 0.5).
+  - `LEN_THRESHOLD`: Character length threshold for splitting prompts (default is 2000).
+  - `SEPARATOR_LIST`: List of separators to use when splitting long prompts.
 
 
 ## Disclaimer
