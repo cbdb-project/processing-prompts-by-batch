@@ -34,7 +34,7 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 
 1. Before running the script, ensure you have Python installed on your system, and then install the required SDK using pip:
 
-For `Deep Seek` users:
+For `Deep Seek` and `Qwen` users:
 ```bash
 pip install -U openai
 ```
@@ -52,11 +52,6 @@ pip install anthropic
 For `GPT-4Free` users:
 ```bash
 pip install g4f
-```
-
-For `Qwen` users:
-```bash
-pip install -U openai
 ```
 
 2. You can obtain a API key from the LLM API website(For exampel, deep seek users can visit https://platform.deepseek.com). After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
