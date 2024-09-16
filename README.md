@@ -34,9 +34,16 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 
 1. Before running the script, ensure you have Python installed on your system, and then install the required SDK using pip:
 
+For deepseek users:
 ```bash
 pip install openai
 ```
+
+For Gemini users:
+```bash
+pip install -q -U google-generativeai
+```
+
 2. You can obtain a API key by visiting https://platform.deepseek.com. After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
 
 ![image](https://github.com/cbdb-project/processing-prompts-by-batch/assets/8538710/f38a0f0f-732d-4f71-bdbd-b2054831b92d)
