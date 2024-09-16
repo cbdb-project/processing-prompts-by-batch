@@ -4,7 +4,7 @@ This project provides a Python script to interact with multiple Large Language M
 
 ## NOTICE
 
-Currently, we the defaul LLM is Deepseek API. 
+Currently, we the defaul LLM is Deep Seek V2 API. 
 
 ## Branch
 
