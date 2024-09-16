@@ -22,13 +22,13 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 
 ## Requirements
 
-- Python 3.9 or newer
-- Dependencies for specific APIs:
-  - `google.generativeai` for Google Gemini
-  - `openai` for Deepseek and Qwen
-  - `anthropic` for Anthropic API
-  - `requests` for OpenAI (Harvard)
-  - `g4f` for GPT-4Free
+  - Python 3.9 or newer
+  - Dependencies for specific APIs:
+    - `google.generativeai` for Google Gemini
+    - `openai` for Deepseek and Qwen
+    - `anthropic` for Anthropic API
+    - `requests` for OpenAI (Harvard)
+    - `g4f` for GPT-4Free
 
 ## Installation
 
@@ -59,23 +59,26 @@ For `Qwen` users:
 pip install -U openai
 ```
 
-2. You can obtain a API key by visiting https://platform.deepseek.com. After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
+2. You can obtain a API key from the LLM API website(For exampel, deep seek users can visit https://platform.deepseek.com). After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
 
 ![image](https://github.com/cbdb-project/processing-prompts-by-batch/assets/8538710/f38a0f0f-732d-4f71-bdbd-b2054831b92d)
 
 ## Usage
 
 1. Place your text prompts in a file named `prompts.txt`, with one prompt per line.
-2. Run probat.py.
-3. The script will process all prompts and save the outputs in `output.txt`.
+2. (Optional) Add a prefix prompt to the `prompt_prefix.txt` file to include a prefix for each prompt if needed.
+3. Run probat.py.
+4. The script will process all prompts and save the outputs in `output.txt`. If this file already exists, it will be overwritten.
 
 ## Configuration
 
 You can adjust the following configurations at the beginning of the script:
 
-- `TEMP_BATCH_SIZE`: The number of prompts to process in each batch (default: 10).
-- `TIMEOUT`: Base timeout in seconds between batches (default: 0.5 seconds).
-- `TIMEOUT_OFFSET`: Additional random timeout offset to prevent consistent timing patterns (default: 0.5).
+     - `TEMP_BATCH_SIZE`: Number of prompts processed in each batch (default is 10).
+     - `TIMEOUT`: The base delay time between API calls (default is 0.5 seconds).
+     - `TIMEOUT_OFFSET`: The offset for randomizing delay time (default is 0.5).
+     - `LEN_THRESHOLD`: Character length threshold for splitting prompts (default is 2000).
+     - `SEPARATOR_LIST`: List of separators to use when splitting long prompts.
 
 
 ## Disclaimer
