@@ -36,7 +36,7 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 
 For `Deep Seek` users:
 ```bash
-pip install openai
+pip install -U openai
 ```
 
 For `Gemini` users:
@@ -49,9 +49,14 @@ For `anthropic` users:
 pip install anthropic
 ```
 
-For `g4f` users:
+For `GPT-4Free` users:
 ```bash
 pip install g4f
+```
+
+For `Qwen` users:
+```bash
+pip install -U openai
 ```
 
 2. You can obtain a API key by visiting https://platform.deepseek.com. After acquiring your API key, save the key to `api_key.txt` in the root directory of the current repository.
