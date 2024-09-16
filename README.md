@@ -4,7 +4,7 @@ This project provides a Python script to interact with multiple Large Language M
 
 ## NOTICE
 
-Currently, we the defaul LLM is Deep Seek V2 API. 
+We are currently using the Deep Seek V2 API as the default. 
 
 ## Branch
 
