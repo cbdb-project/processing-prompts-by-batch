@@ -1,10 +1,10 @@
 # Processing Prompts by Batch (probat)
 
-Processing Prompts by Batch is a Python script designed to automate the process of sending batches of prompts to LLM API and collecting their responses. It reads prompts from a text file, sends them to the LLM API, and saves the processed output in another text file. The script is useful for bulk processing of text data, leveraging the LLM API for text generation or transformation tasks.
+This project provides a Python script to interact with multiple Large Language Models (LLMs) from various APIs like Google Gemini, Deepseek, OpenAI (Harvard), Anthropic, GPT-4Free, and Qwen. The script allows batch processing of prompts, splitting lengthy inputs into manageable chunks, and retrieving responses from the specified LLM.
 
 ## NOTICE
 
-Currently, we are using the Deepseek API. 
+Currently, we the defaul LLM is Deepseek API. 
 
 ## Branch
 
@@ -14,16 +14,21 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 
 ## Features
 
-- **Batch Processing:** Process multiple prompts in batches, reducing the overhead of sending individual requests.
-- **Customizable Timing:** Configurable timeouts between API calls to prevent rate limiting.
-- **Text Cleaning:** Cleans up the output text by replacing newline characters with HTML line breaks for easier web display.
-- **Dynamic Batch Sizing:** Adjusts the batch size based on the number of prompts to ensure efficient processing.
-- **Output Management:** Automatically creates an output file for the processed prompts and ensures no duplication by removing any existing output file at the start.
+- Multi-API Support: Easily switch between different language models including Google Gemini, Deepseek, OpenAI (Harvard), Anthropic, GPT-4Free, and Qwen by setting api_choice.
+- Chunk Splitting: Automatically splits long prompts into smaller chunks based on specified separators to ensure they fit within token limits.
+- Text Cleaning: Converts newline characters to <br /> for formatted output.
+- Configurable Parameters: Adjust batch size, timeout, and token length thresholds for efficient processing.
+- Batch Processing: Processes multiple prompts at a time, writing outputs to an external file.
 
 ## Requirements
 
 - Python 3.9 or newer
-- OpenAI package
+- Dependencies for specific APIs:
+  - `google.generativeai` for Google Gemini
+  - `openai` for Deepseek and Qwen
+  - `anthropic` for Anthropic API
+  - `requests` for OpenAI (Harvard)
+  - `g4f` for GPT-4Free
 
 ## Installation
 
