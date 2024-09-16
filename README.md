@@ -16,7 +16,7 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
 
 - Multi-API Support: Easily switch between different language models including Google Gemini, Deepseek, OpenAI (Harvard), Anthropic, GPT-4Free, and Qwen by setting api_choice.
 - Chunk Splitting: Automatically splits long prompts into smaller chunks based on specified separators to ensure they fit within token limits.
-- Text Cleaning: Converts newline characters to <br /> for formatted output.
+- Text Cleaning: Converts newline characters to `<br />` for formatted output.
 - Configurable Parameters: Adjust batch size, timeout, and token length thresholds for efficient processing.
 - Batch Processing: Processes multiple prompts at a time, writing outputs to an external file.
 
