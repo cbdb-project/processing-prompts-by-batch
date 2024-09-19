@@ -62,8 +62,9 @@ pip install g4f
 
 1. Place your text prompts in a file named `prompts.txt`, with one prompt per line.
 2. (Optional) Add a prefix prompt to the `prompt_prefix.txt` file to include a prefix for each prompt if needed.
-3. Run probat.py.
-4. The script will process all prompts and save the outputs in `output.txt`. If this file already exists, it will be overwritten.
+3. Change `api_choice = "deepseek"` in `probat.py` to the LLM you want to use and save the file. The available options are: gemini, deepseek, openai_harvard, anthropic, call_g4f, and qwen.
+4. Run probat.py.
+5. The script will process all prompts and save the outputs in `output.txt`. If this file already exists, it will be overwritten.
 
 ## Configuration
 
