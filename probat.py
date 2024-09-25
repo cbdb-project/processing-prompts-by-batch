@@ -77,7 +77,7 @@ def call_g4f(text, max_retries=3, retry_delay=5):
 
 def qwen(text):
     completion = client.chat.completions.create(
-        model="qwen2-72b-instruct",
+        model="qwen2.5-72b-instruct",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": text},
