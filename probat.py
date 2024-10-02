@@ -21,6 +21,8 @@ def deepseek(text):
         messages=[
             {"role": "user", "content": text},
         ],
+        # temperature =  0.7,
+        # top_p = 0.1,
     )
     return response.choices[0].message.content
 
@@ -38,7 +40,9 @@ def openai_harvard(text):
                 "content": text
             }
         ],
-        "max_tokens": max_tokens
+        "max_tokens": max_tokens,
+        # "temperature": 0.7,
+        # "top_p": 0.1,
     }
     response = requests.post("https://go.apis.huit.harvard.edu/ais-openai-direct/v1/chat/completions", headers=headers, json=payload)
     response_json = response.json()
