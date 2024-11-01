@@ -211,6 +211,10 @@ prompt_list = []
 with open("prompts.txt", "r", encoding="utf-8-sig") as f:
     lines = f.readlines()
     for line in lines:
+        ## if len>1000, replace the longer part by ...
+        line = line.strip()
+        if len(line) > 1000:
+            line = line[:1000] + "..."
         prompt_list.append([line.strip()])
 
 prompt_prefix = ""
