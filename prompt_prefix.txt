@@ -1,1 +1,125 @@
-﻿
+﻿Final prompt:
+
+Identify if each line is a **title**. Do not include any explanations, comments, or Python code in the output. Only provide a tsv format with two columns:  
+- `#`: The row number from the input  
+- `title`: The identified title from the text  
+
+Here is the input text:
+
+
+---
+
+
+**Task Narrative:** Your task is to process the input text according to the following rules:
+1. For each line, determine if it is a **title**, **content**.
+2. Place the **title** in the "title" column.
+5. If the line contains content related to a title, place all consecutive content lines in the "content" column of the row following the title.
+6. If the line is **neither a title nor content**, place it in the "content" column and leave the "title" column blank.
+2. The first line of the input may serve as a title or part of the content. Since the text was divided into fixed-size chunks from the original text, the first line could belong to a different chunk.
+3. Most titles are similar with each other.
+7. Ensure multiple lines of content following a title are concatenated into a single cell in the "content" column.
+8. Content lines directly related to a title (even if poetic or succinct) should be concatenated into the "content" column of the title row.
+9. A new title begins only when there is a clear separation in context or indication of a new section.
+10. Do not extract part of a line as a title; each line should remain complete.
+11. Output the data in the following format:
+   - Column 1: `#` (row number from the input)
+   - Column 2: `title`
+   - Column 3: `content`
+12. Do not write a Python program to handle this.
+13. Do not export anything else except for the formatted sheet.
+
+
+**Input Example:**
+
+```
+#	line
+1	東皋錄，明，釋妙聲。
+2	欽定四庫全書。
+3	集部六。
+4	東皋錄。
+5	別集類五。
+6	明。
+7	提要。
+8	臣等謹案東皋録三卷，明釋妙聲撰。妙聲字九皋，吳縣人。元末居景德寺，後居常熟慧日寺，又主平江北禪寺。洪武三年，與釋萬金同被召，蒞天下釋教。所作詩文，繕寫藏之山房。洪武十七年，其徒德瓛始刊行之。明史藝文志、明僧宏秀集皆作七卷，此本有汲古閣印，蓋毛晉家鈔本。前有晉題識，亦稱德瓛所刻，凡詩三卷，雜文四卷，而其書雜文及詩僅共為三卷，蓋傳録時所合併也。妙聲入明時年已六十餘，詩文多至正中所作，故顧嗣立元詩選亦録是集。然方外者流，不攖爵祿，不能以受官與否為兩朝之斷限。既已謁帝金門，即屬歸誠新主，不能復以遺老稱矣。今系之明，從其實也。妙聲與袁桷、張翥、危素等俱相友善，故所作頗有士風。當元季擾攘之時，感事抒懷，往往激昂可誦。雜文體裁清整，四六儷語，亦具有南宋遺風。在緇流之內，雖未能語帶煙霞，猶非氣含蔬筍者也。
+9	乾隆四十六年九月恭校上。
+10	總纂官（臣）紀昀，（臣）陸錫熊，（臣）孫士毅。
+11	總校官（臣）陸費墀。
+12	●東皋録題識。
+13	師名妙聲字九皋，吳郡人也。姑蘇志云：「景德寺僧，有詩（阙），生平多著述，名東皋錄，命弟子繕寫，藏之山房。總其事者，白蓮住山完敬修，虎丘藏主慧無盡，善士陳君錫也。」洪武十七年甲子春，法孫德瓛跋而授梓，凡詩三卷，序記贊銘傳跋雜文四卷。其中載記同衣行業，既多且詳，劉子威《吳釋傳》皆拾其餘沫也。尤長於四六儷語，卷末諸山江湖等疏，堪與月泉吟社往復詩啟並傳。其興福桃源諸記，余已撰入邑乘云。東吳毛晉子晉識。
+14	●欽定四庫全書。
+15	東皋録卷上。
+16	（明）釋妙聲撰。
+17	飛鯨樓詩。
+18	崇樓言言，上下太清；鳴鐘在懸，飛鯨是名。在昔先民，制器尚形，取類相感，用諠其聲。此方真教，由聞而入，誕敷法音，昭我玄極。假物以鳴，與世作則，震驚大千，羣響俄息。維此積善，靈僧之宮，爰作斯樓，警昏啟蒙。侯誰尸之？曰沙門惠公。胡潰於成？矢誓在躬。瞻彼飛樓，峙於東海；華■〈魚畺〉在茲，蒲牢震駭。苦輪乃軔，音場無礙；於千萬年，迷者永賴。
+```
+
+**Output Example:**
+
+```
+#	title	content
+1	東皋錄，明，釋妙聲。	
+2	欽定四庫全書。	
+3	集部六。	
+4	東皋錄。	
+5	別集類五。	
+6	明。	
+7	提要。	臣等謹案東皋録三卷，明釋妙聲撰。妙聲字九皋，吳縣人。元末居景德寺，後居常熟慧日寺，又主平江北禪寺。洪武三年，與釋萬金同被召，蒞天下釋教。所作詩文，繕寫藏之山房。洪武十七年，其徒德瓛始刊行之。明史藝文志、明僧宏秀集皆作七卷，此本有汲古閣印，蓋毛晉家鈔本。前有晉題識，亦稱德瓛所刻，凡詩三卷，雜文四卷，而其書雜文及詩僅共為三卷，蓋傳録時所合併也。妙聲入明時年已六十餘，詩文多至正中所作，故顧嗣立元詩選亦録是集。然方外者流，不攖爵祿，不能以受官與否為兩朝之斷限。既已謁帝金門，即屬歸誠新主，不能復以遺老稱矣。今系之明，從其實也。妙聲與袁桷、張翥、危素等俱相友善，故所作頗有士風。當元季擾攘之時，感事抒懷，往往激昂可誦。雜文體裁清整，四六儷語，亦具有南宋遺風。在緇流之內，雖未能語帶煙霞，猶非氣含蔬筍者也。
+9	乾隆四十六年九月恭校上.	
+10	總纂官（臣）紀昀，（臣）陸錫熊，（臣）孫士毅.	
+11	總校官（臣）陸費墀.	
+12	●東皋録題識.	師名妙聲字九皋，吳郡人也。姑蘇志云：「景德寺僧，有詩（阙），生平多著述，名東皋錄，命弟子繕寫，藏之山房。總其事者，白蓮住山完敬修，虎丘藏主慧無盡，善士陳君錫也。」洪武十七年甲子春，法孫德瓛跋而授梓，凡詩三卷，序記贊銘傳跋雜文四卷。其中載記同衣行業，既多且詳，劉子威《吳釋傳》皆拾其餘沫也。尤長於四六儷語，卷末諸山江湖等疏，堪與月泉吟社往復詩啟並傳。其興福桃源諸記，余已撰入邑乘云。東吳毛晉子晉識.
+14	●欽定四庫全書.	
+15	東皋録卷上.	
+16	（明）釋妙聲撰.	
+17	飛鯨樓詩.	崇樓言言，上下太清；鳴鐘在懸，飛鯨是名。在昔先民，制器尚形，取類相感，用諠其聲。此方真教，由聞而入，誕敷法音，昭我玄極.	
+```
+
+Here is the text:
+
+
+
+
+
+---
+
+Don't use this ↓
+
+**Task Narrative**
+
+Your task is to process the input text according to the following rules:
+
+1. **Titles and Content Identification:**
+   - A **title** is a line that introduces a new section, topic, or record. It is typically concise and self-contained.
+   - **Content** consists of explanatory or descriptive text associated with a preceding title.
+
+2. **Grouping Titles and Content:**
+   - Place each **title** in the "title" column.
+   - Place **all consecutive lines of content directly associated with a title** in the "content" column of the same row.
+   - If no content follows a title, leave the "content" column blank for that row.
+
+3. **Contextual Assignment:**
+   - Content that clearly belongs to the preceding title (even if poetic or narrative in style) must be concatenated into the "content" column of the respective title row.
+   - Content should not be split across rows unless explicitly indicated by a new title.
+
+4. **Unclear Titles or Standalone Lines:**
+   - If a line does not explicitly indicate it is a **title** or **content**, treat it as a title and leave the "content" column blank.
+
+5. **New Section Start:**
+   - A new title begins when:
+     - A new topic, section, or record is clearly introduced.
+     - The context of the text shifts, suggesting the end of the prior title's content.
+
+6. **Formatting:**
+   - Output should be structured with the following columns:
+     - Column 1: `#` (row number from the input)
+     - Column 2: `title`
+     - Column 3: `content`
+
+7. **Additional Guidance:**
+   - Do not split content arbitrarily across rows. Ensure all relevant content follows the appropriate title.
+   - Keep the entire line intact for each title or content segment; do not extract partial lines.
+
+Do not export anything else except for the formatted sheet.
+
+Here is the text:
+3
