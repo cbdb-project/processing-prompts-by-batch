@@ -208,10 +208,7 @@ elif api_choice == "anthropic":
     import anthropic
 
     client = anthropic.Anthropic(api_key=api_key_str)
-elif api_choice == "call_g4f":
-    from g4f.client import Client
 
-    client = Client()
 elif api_choice == "qwen":
     from openai import OpenAI
 
