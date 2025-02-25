@@ -93,6 +93,16 @@ def qwen(text):
     )
     return completion.choices[0].message.content
 
+def volcengine(text):
+    response = client.chat.completions.create(
+        model="deepseek-v3-241226",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": text},
+        ],
+    )
+    return response.choices[0].message.content
+
 
 def clean_text(text):
     text = text.replace("\n", "<br />")
@@ -172,8 +182,8 @@ TIMEOUT = 0.5
 TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 2000
-# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen...
-api_choice = "deepseek"
+# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen, volcengine...
+api_choice = "volcengine"
 
 api_functions = {
     "gemini": gemini,
@@ -182,6 +192,7 @@ api_functions = {
     "anthropic": anthropic,
     "call_g4f": call_g4f,
     "qwen": qwen,
+    "volcengine": volcengine,
 }
 
 # Initialize LLM
@@ -219,6 +230,14 @@ elif api_choice == "qwen":
     client = OpenAI(
         api_key=os.getenv("DASHSCOPE_API_KEY"),
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    )
+elif api_choice == "volcengine":
+    from openai import OpenAI
+
+    os.environ["ARK_API_KEY"] = api_key_str
+    client = OpenAI(
+        api_key=os.getenv("ARK_API_KEY"),
+        base_url="https://ark.cn-beijing.volces.com/api/v3",
     )
 
 if os.path.exists("output.txt"):
