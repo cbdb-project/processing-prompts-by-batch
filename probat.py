@@ -236,6 +236,10 @@ elif api_choice == "volcengine":
         api_key=os.getenv("ARK_API_KEY"),
         base_url="https://ark.cn-beijing.volces.com/api/v3",
     )
+elif api_choice == "call_g4f":
+    from g4f.client import Client
+
+    client = Client()
 
 if os.path.exists("output.txt"):
     os.remove("output.txt")
