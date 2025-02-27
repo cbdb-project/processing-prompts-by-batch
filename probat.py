@@ -100,6 +100,7 @@ def volcengine(text):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": text},
         ],
+        temperature=0,
     )
     return response.choices[0].message.content
 
@@ -183,7 +184,7 @@ TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 2000
 # api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen, volcengine...
-api_choice = "deepseek"
+api_choice = "volcengine"
 
 api_functions = {
     "gemini": gemini,
