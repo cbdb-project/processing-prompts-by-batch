@@ -254,6 +254,7 @@ with open("prompts.txt", "r", encoding="utf-8-sig") as f:
         #     line = line[:1000] + "..."
         prompt_list.append([line.strip()])
 
+print(f"Total lines: {len(prompt_list)} found. Starting generation...")
 prompt_prefix = ""
 with open("prompt_prefix.txt", "r", encoding="utf-8-sig") as f:
     prompt_prefix = f.read().replace("\n", "\\n")
