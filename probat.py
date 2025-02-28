@@ -4,7 +4,7 @@ import time
 import re
 
 # Configuration
-PROMPT_BATCH = 10  # number of prompts to concatenate with \n
+PROMPT_BATCH = 1  # number of prompts to concatenate with \n
 TEMP_BATCH_SIZE = 10 # number of prompts to generate in a single batch. Don't need to change this for most cases
 TIMEOUT = 0.5
 TIMEOUT_OFFSET = 0.5
