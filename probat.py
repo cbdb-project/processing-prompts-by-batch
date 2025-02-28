@@ -3,6 +3,16 @@ import random
 import time
 import re
 
+# Configuration
+PROMPT_BATCH = 10  # number of prompts to concatenate with \n
+TEMP_BATCH_SIZE = 10 # number of prompts to generate in a single batch. Don't need to change this for most cases
+TIMEOUT = 0.5
+TIMEOUT_OFFSET = 0.5
+SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
+LEN_THRESHOLD = 2000
+# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen, volcengine...
+api_choice = "deepseek"
+
 with open("api_key.txt", "r") as file:
     api_key_str = file.read()
 
@@ -175,16 +185,6 @@ def llm_api(text, api_choice):
     else:
         raise ValueError(f"Unknown API choice: {api_choice}")
 
-
-# configuration
-TEMP_BATCH_SIZE = 10
-TIMEOUT = 0.5
-TIMEOUT_OFFSET = 0.5
-SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
-LEN_THRESHOLD = 2000
-# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen, volcengine...
-api_choice = "deepseek"
-
 api_functions = {
     "gemini": gemini,
     "deepseek": deepseek,
@@ -247,14 +247,18 @@ if os.path.exists("output.txt"):
 prompt_list = []
 with open("prompts.txt", "r", encoding="utf-8-sig") as f:
     lines = f.readlines()
+    temp_batch = []
     for line in lines:
-        ## if len>1000, replace the longer part by ...
         line = line.strip()
-        # if len(line) > 1000:
-        #     line = line[:1000] + "..."
-        prompt_list.append([line.strip()])
+        temp_batch.append(line)
+        if len(temp_batch) == PROMPT_BATCH:
+            prompt_list.append(["\n".join(temp_batch)])
+            temp_batch = []
+    # Add any remaining prompts
+    if temp_batch:
+        prompt_list.append(["\n".join(temp_batch)])
 
-print(f"Total lines: {len(prompt_list)} found. Starting generation...")
+print(f"Total batches: {len(prompt_list)} found. Starting generation...")
 prompt_prefix = ""
 with open("prompt_prefix.txt", "r", encoding="utf-8-sig") as f:
     prompt_prefix = f.read().replace("\n", "\\n")
