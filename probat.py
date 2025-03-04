@@ -53,7 +53,7 @@ def openai_harvard(text):
 def anthropic(text):
     message = client.messages.create(
         model="claude-3-7-sonnet-20250219",
-        max_tokens=2048,
+        max_tokens=8100,
         messages=[{"role": "user", "content": text}],
     )
     return message.content[0].text
@@ -182,7 +182,7 @@ TEMP_BATCH_SIZE = 10
 TIMEOUT = 0.5
 TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
-LEN_THRESHOLD = 2000
+LEN_THRESHOLD = 8000
 # api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen, volcengine...
 api_choice = "anthropic"
 
