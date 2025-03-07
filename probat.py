@@ -2,6 +2,7 @@ import os
 import random
 import time
 import re
+import base64
 
 # Configuration
 PROMPT_BATCH = 1  # number of prompts to concatenate with \n
@@ -10,7 +11,7 @@ TIMEOUT = 0.5
 TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 2000
-# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen, volcengine...
+# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen, volcengine, qwen_vl...
 api_choice = "deepseek"
 
 with open("api_key.txt", "r") as file:
@@ -113,6 +114,24 @@ def volcengine(text):
     )
     return response.choices[0].message.content
 
+def qwen_vl(img_path):
+    def encode_image(image_path):
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode("utf-8")
+
+    base64_image = encode_image(img_path)
+    completion = client.chat.completions.create(
+        model="qwen-vl-plus",
+        messages=[{
+            "role": "user", 
+            "content": [
+                {"type": "text", "text": prompt_prefix},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+            ]
+        }]
+    )
+    return completion.choices[0].message.content
+
 
 def clean_text(text):
     text = text.replace("\n", "<br />")
@@ -193,6 +212,7 @@ api_functions = {
     "call_g4f": call_g4f,
     "qwen": qwen,
     "volcengine": volcengine,
+    "qwen_vl": qwen_vl,
 }
 
 # Initialize LLM
@@ -240,72 +260,107 @@ elif api_choice == "call_g4f":
     from g4f.client import Client
 
     client = Client()
+elif api_choice == "qwen_vl":
+    from openai import OpenAI
+
+    os.environ["QWEN_VL_API_KEY"] = api_key_str
+    client = OpenAI(
+        api_key=os.getenv("QWEN_VL_API_KEY"),
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    )
 
 if os.path.exists("output.txt"):
     os.remove("output.txt")
 
 prompt_list = []
-with open("prompts.txt", "r", encoding="utf-8-sig") as f:
-    lines = f.readlines()
-    temp_batch = []
-    for line in lines:
-        line = line.strip()
-        temp_batch.append(line)
-        if len(temp_batch) == PROMPT_BATCH:
-            prompt_list.append(["\n".join(temp_batch)])
-            temp_batch = []
-    # Add any remaining prompts
-    if temp_batch:
-        prompt_list.append(["\n".join(temp_batch)])
 
-print(f"Total batches: {len(prompt_list)} found. Starting generation...")
 prompt_prefix = ""
 with open("prompt_prefix.txt", "r", encoding="utf-8-sig") as f:
     prompt_prefix = f.read().replace("\n", "\\n")
     prompt_prefix = prompt_prefix.strip()
 
-temp_output_list = []
+# if the model name not end with _vl
+if api_choice[-3:] != "_vl":
+    with open("prompts.txt", "r", encoding="utf-8-sig") as f:
+        lines = f.readlines()
+        temp_batch = []
+        for line in lines:
+            line = line.strip()
+            temp_batch.append(line)
+            if len(temp_batch) == PROMPT_BATCH:
+                prompt_list.append(["\n".join(temp_batch)])
+                temp_batch = []
+        # Add any remaining prompts
+        if temp_batch:
+            prompt_list.append(["\n".join(temp_batch)])
 
-if len(prompt_list) < TEMP_BATCH_SIZE:
-    TEMP_BATCH_SIZE = len(prompt_list)
-for i in range(0, len(prompt_list), TEMP_BATCH_SIZE):
-    temp_batch = prompt_list[i : i + TEMP_BATCH_SIZE]
-    for prompt in temp_batch:
+    print(f"Total batches: {len(prompt_list)} found. Starting generation...")
+
+    temp_output_list = []
+
+    if len(prompt_list) < TEMP_BATCH_SIZE:
+        TEMP_BATCH_SIZE = len(prompt_list)
+    for i in range(0, len(prompt_list), TEMP_BATCH_SIZE):
+        temp_batch = prompt_list[i : i + TEMP_BATCH_SIZE]
+        for prompt in temp_batch:
+            timeout = TIMEOUT + random.random() * 0.1 * TIMEOUT_OFFSET
+            time.sleep(timeout)
+            # output_record = call_g4f(prompt[0])
+            # output_record = anthropic(prompt[0])
+            prompt_chunks = []
+            if len(prompt[0]) > LEN_THRESHOLD:
+                prompt_chunks = split_by_threshold(prompt[0], SEPARATOR_LIST, LEN_THRESHOLD)
+            else:
+                prompt_chunks = [prompt[0]]
+            # print(prompt_chunks)
+            output_record = ""
+            for prompt_chunk in prompt_chunks:
+                try:
+                    prompt_with_prefix = prompt_prefix + prompt_chunk
+                    if output_record == "":
+                        output_record = llm_api(prompt_with_prefix, api_choice)
+                    else:
+                        output_record = (
+                            output_record
+                            + "<SEP>"
+                            + llm_api(prompt_with_prefix, api_choice)
+                        )
+                except Exception as e:
+                    print(f"Error: {e}")
+                    output_record = "Error"
+                    break
+            # output_record = gemini(prompt[0])
+            output_record = clean_text(output_record)
+            temp_output_list.append(output_record)
+        with open("output.txt", "a", encoding="utf-8") as f:
+            for output_record in temp_output_list:
+                f.write(output_record + "\n")
+        temp_output_list = []
+        if (i + TEMP_BATCH_SIZE) < len(prompt_list):
+            print(f"Finished {i + TEMP_BATCH_SIZE}/{len(prompt_list)} prompts on {time.strftime('%H:%M:%S')}")
+        else:
+            print(f"Finished {len(prompt_list)}/{len(prompt_list)} prompts on {time.strftime('%H:%M:%S')}")
+else:
+    image_list = []
+    # read from image paths from img folder
+    for root, dirs, files in os.walk("img"):
+        for file in files:
+            image_list.append(os.path.join(root, file))
+    counter = 0
+    for img_path in image_list:
+        counter += 1
+        if counter % 10 == 0:
+            print(f"Finished {counter}/{len(image_list)} images on {time.strftime('%H:%M:%S')}")
         timeout = TIMEOUT + random.random() * 0.1 * TIMEOUT_OFFSET
         time.sleep(timeout)
-        # output_record = call_g4f(prompt[0])
-        # output_record = anthropic(prompt[0])
-        prompt_chunks = []
-        if len(prompt[0]) > LEN_THRESHOLD:
-            prompt_chunks = split_by_threshold(prompt[0], SEPARATOR_LIST, LEN_THRESHOLD)
-        else:
-            prompt_chunks = [prompt[0]]
-        # print(prompt_chunks)
-        output_record = ""
-        for prompt_chunk in prompt_chunks:
-            try:
-                prompt_with_prefix = prompt_prefix + prompt_chunk
-                if output_record == "":
-                    output_record = llm_api(prompt_with_prefix, api_choice)
-                else:
-                    output_record = (
-                        output_record
-                        + "<SEP>"
-                        + llm_api(prompt_with_prefix, api_choice)
-                    )
-            except Exception as e:
-                print(f"Error: {e}")
-                output_record = "Error"
-                break
-        # output_record = gemini(prompt[0])
+        try:
+            output_record = llm_api(img_path, api_choice)
+        except Exception as e:
+            print(f"Error: {e}")
+            output_record = "Error"
         output_record = clean_text(output_record)
-        temp_output_list.append(output_record)
-    with open("output.txt", "a", encoding="utf-8") as f:
-        for output_record in temp_output_list:
+        with open("output.txt", "a", encoding="utf-8") as f:
             f.write(output_record + "\n")
-    temp_output_list = []
-    if (i + TEMP_BATCH_SIZE) < len(prompt_list):
-        print(f"Finished {i + TEMP_BATCH_SIZE}/{len(prompt_list)} prompts")
-    else:
-        print(f"Finished {len(prompt_list)}/{len(prompt_list)} prompts")
+
+    print(f"Total images: {len(image_list)} found. Starting generation...")
 print("Finished all prompts")
