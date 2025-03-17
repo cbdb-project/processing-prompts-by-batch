@@ -11,7 +11,7 @@ TIMEOUT = 0.5
 TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 2000
-# api_choice: gemini, deepseek, openai_harvard, anthropic, call_g4f, qwen, volcengine, qwen_vl...
+# api_choice: gemini, deepseek, openai_harvard, openai_harvard_reimbursed, anthropic, call_g4f, qwen, volcengine, qwen_vl...
 api_choice = "deepseek"
 
 with open("api_key.txt", "r") as file:
@@ -59,6 +59,21 @@ def openai_harvard(text):
     # print(response_json)
     return response_json["choices"][0]["message"]["content"]
 
+# OpenAI Harvard Reimbursed
+def c(text):
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "user", "content": text},
+        ],
+    }
+    response = requests.post(
+        "https://go.apis.huit.harvard.edu/ais-openai-direct-limited-schools/v1/chat/completions",
+        headers=headers,
+        json=payload,
+    )
+    response_json = response.json()
+    return response_json["choices"][0]["message"]["content"]
 
 # Glaude-3
 def anthropic(text):
@@ -213,6 +228,7 @@ api_functions = {
     "qwen": qwen,
     "volcengine": volcengine,
     "qwen_vl": qwen_vl,
+    "openai_harvard_reimbursed": openai_harvard_reimbursed,
 }
 
 # Initialize LLM
@@ -226,6 +242,16 @@ elif api_choice == "deepseek":
 
     client = OpenAI(api_key=api_key_str, base_url="https://api.deepseek.com/")
 elif api_choice == "openai_harvard":
+    import requests
+
+    model = "gpt-4o"
+    max_tokens = 2048
+    headers = {
+        "api-key": api_key_str,
+        "Content-Type": "application/json",
+        "Accept-Encoding": "gzip, deflate, identity",
+    }
+elif api_choice == "openai_harvard_reimbursed":
     import requests
 
     model = "gpt-4o"
