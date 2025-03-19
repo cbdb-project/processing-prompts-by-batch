@@ -60,7 +60,7 @@ def openai_harvard(text):
     return response_json["choices"][0]["message"]["content"]
 
 # OpenAI Harvard Reimbursed
-def c(text):
+def openai_harvard_reimbursed(text):
     payload = {
         "model": model,
         "messages": [
