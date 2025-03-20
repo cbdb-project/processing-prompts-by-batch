@@ -372,6 +372,8 @@ else:
     for root, dirs, files in os.walk("img"):
         for file in files:
             image_list.append(os.path.join(root, file))
+    image_list.sort()
+    print(f"Total images: {len(image_list)} found. Starting generation...")
     counter = 0
     for img_path in image_list:
         counter += 1
@@ -387,6 +389,4 @@ else:
         output_record = clean_text(output_record)
         with open("output.txt", "a", encoding="utf-8") as f:
             f.write(output_record + "\n")
-
-    print(f"Total images: {len(image_list)} found. Starting generation...")
 print("Finished all prompts")
