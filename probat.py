@@ -79,7 +79,7 @@ def openai_harvard_reimbursed(text):
 def anthropic(text):
     message = client.messages.create(
         model="claude-3-7-sonnet-20250219",
-        max_tokens=2048,
+        max_tokens=100000,
         messages=[{"role": "user", "content": text}],
     )
     return message.content[0].text
@@ -245,7 +245,7 @@ elif api_choice == "openai_harvard":
     import requests
 
     model = "gpt-4o"
-    max_tokens = 2048
+    max_tokens = 60000
     headers = {
         "api-key": api_key_str,
         "Content-Type": "application/json",
@@ -255,7 +255,7 @@ elif api_choice == "openai_harvard_reimbursed":
     import requests
 
     model = "gpt-4o"
-    max_tokens = 2048
+    max_tokens = 60000
     headers = {
         "api-key": api_key_str,
         "Content-Type": "application/json",
