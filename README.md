@@ -29,6 +29,8 @@ https://github.com/jzou19957/Unlimited-Excel-Processing-through-GPT-3.5-API
     - `anthropic` for Anthropic API
     - `requests` for OpenAI (Harvard)
     - `g4f` for GPT-4Free
+    - `qwen_vl` for qwen2.5-72b-instruct
+    - `gemini_vl` for gemini-2.0-flash
 
 ## Installation
 
@@ -41,7 +43,8 @@ pip install -U openai
 
 For `Gemini` users:
 ```bash
-pip install -q -U google-generativeai
+pip install -U -q "google"
+pip install -U -q "google.genai"
 ```
 
 For `anthropic` users:

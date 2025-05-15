@@ -11,7 +11,7 @@ TIMEOUT = 0.5
 TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 2000
-# api_choice: gemini, deepseek, openai_harvard, openai_harvard_reimbursed, anthropic, call_g4f, qwen, volcengine, qwen_vl...
+# api_choice: gemini, deepseek, openai_harvard, openai_harvard_reimbursed, anthropic, call_g4f, qwen, volcengine, qwen_vl, gemini_vl...
 api_choice = "deepseek"
 
 with open("api_key.txt", "r") as file:
@@ -20,7 +20,11 @@ with open("api_key.txt", "r") as file:
 
 ## Google Gemini
 def gemini(text):
-    response = client.generate_content(text)
+    # response = client.generate_content(text)
+    response = client.models.generate_content(
+    model = gemini_model,
+    contents= text
+)
     # return to_markdown(response.text)
     return response.text
 
@@ -79,7 +83,7 @@ def openai_harvard_reimbursed(text):
 def anthropic(text):
     message = client.messages.create(
         model="claude-3-7-sonnet-20250219",
-        max_tokens=2048,
+        max_tokens=100000,
         messages=[{"role": "user", "content": text}],
     )
     return message.content[0].text
@@ -129,11 +133,11 @@ def volcengine(text):
     )
     return response.choices[0].message.content
 
-def qwen_vl(img_path):
-    def encode_image(image_path):
-        with open(image_path, "rb") as image_file:
-            return base64.b64encode(image_file.read()).decode("utf-8")
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
 
+def qwen_vl(img_path):
     base64_image = encode_image(img_path)
     completion = client.chat.completions.create(
         model="qwen-vl-plus-latest",
@@ -147,6 +151,18 @@ def qwen_vl(img_path):
     )
     return completion.choices[0].message.content
 
+def gemini_vl(img_path):
+    with open(img_path, "rb") as image_file:
+        image_data = image_file.read()
+
+    response = client.models.generate_content(
+        model=gemini_model,
+        contents=[
+            prompt_prefix,
+            types.Part.from_bytes(data=image_data, mime_type="image/png")
+        ]
+    )
+    return response.text
 
 def clean_text(text):
     text = text.replace("\n", "<br />")
@@ -212,7 +228,6 @@ def split_by_threshold(prompt, separators, len_threshold):
 
     return chunks
 
-
 def llm_api(text, api_choice):
     if api_choice in api_functions:
         return api_functions[api_choice](text)
@@ -229,14 +244,16 @@ api_functions = {
     "volcengine": volcengine,
     "qwen_vl": qwen_vl,
     "openai_harvard_reimbursed": openai_harvard_reimbursed,
+    "gemini_vl": gemini_vl,
 }
 
 # Initialize LLM
-if api_choice == "gemini":
-    import google.generativeai as genai
+if api_choice == "gemini" or api_choice == "gemini_vl":
+    from google import genai
+    from google.genai import types
 
-    genai.configure(api_key=api_key_str)
-    client = genai.GenerativeModel("gemini-pro")
+    gemini_model = "gemini-2.0-flash"
+    client = genai.Client(api_key=api_key_str)
 elif api_choice == "deepseek":
     from openai import OpenAI
 
@@ -245,7 +262,7 @@ elif api_choice == "openai_harvard":
     import requests
 
     model = "gpt-4o"
-    max_tokens = 2048
+    max_tokens = 60000
     headers = {
         "api-key": api_key_str,
         "Content-Type": "application/json",
@@ -255,7 +272,7 @@ elif api_choice == "openai_harvard_reimbursed":
     import requests
 
     model = "gpt-4o"
-    max_tokens = 2048
+    max_tokens = 60000
     headers = {
         "api-key": api_key_str,
         "Content-Type": "application/json",
