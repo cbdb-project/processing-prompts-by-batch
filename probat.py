@@ -12,7 +12,7 @@ TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 2000
 # api_choice: gemini, deepseek, openai, openai_harvard, openai_harvard_reimbursed, anthropic, call_g4f, qwen, volcengine, qwen_vl, gemini_vl...
-api_choice = "deepseek"
+api_choice = "openai_harvard_reimbursed"
 
 with open("api_key.txt", "r") as file:
     api_key_str = file.read()
@@ -276,12 +276,12 @@ elif api_choice == "openai":
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key_str)
-    model = "gpt-4.1"
+    model = "gpt-5"
     max_tokens = 30000
 elif api_choice == "openai_harvard":
     import requests
 
-    model = "gpt-4.1-2025-04-14"
+    model = "gpt-5"
     max_tokens = 30000
     headers = {
         "api-key": api_key_str,
@@ -291,7 +291,7 @@ elif api_choice == "openai_harvard":
 elif api_choice == "openai_harvard_reimbursed":
     import requests
 
-    model = "gpt-4.1-2025-04-14"
+    model = "gpt-5"
     max_tokens = 30000
     headers = {
         "api-key": api_key_str,
