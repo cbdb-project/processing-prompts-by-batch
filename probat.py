@@ -12,7 +12,7 @@ TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 2000
 # api_choice: gemini, deepseek, openai, openai_harvard, openai_harvard_reimbursed, anthropic, call_g4f, qwen, volcengine, qwen_vl, gemini_vl...
-api_choice = "openai_harvard_reimbursed"
+api_choice = "deepseek"
 
 with open("api_key.txt", "r") as file:
     api_key_str = file.read()
