@@ -10,7 +10,7 @@ TEMP_BATCH_SIZE = 10 # number of prompts to generate in a single batch. Don't ne
 TIMEOUT = 0.5
 TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
-LEN_THRESHOLD = 2000
+LEN_THRESHOLD = 7500
 # api_choice: gemini, deepseek, openai, openai_harvard, openai_harvard_reimbursed, anthropic, call_g4f, qwen, volcengine, qwen_vl, gemini_vl...
 api_choice = "deepseek"
 
@@ -36,6 +36,7 @@ def deepseek(text):
         messages=[
             {"role": "user", "content": text},
         ],
+        max_tokens= max_tokens,
         # temperature =  0.7,
         # top_p = 0.1,
     )
@@ -96,7 +97,7 @@ def openai_harvard_reimbursed(text):
 def anthropic(text):
     message = client.messages.create(
         model="claude-sonnet-4-20250514",
-        max_tokens=100000,
+        max_tokens=max_tokens,
         messages=[{"role": "user", "content": text}],
     )
     return message.content[0].text
@@ -272,6 +273,7 @@ elif api_choice == "deepseek":
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key_str, base_url="https://api.deepseek.com/")
+    max_tokens = 7500
 elif api_choice == "openai":
     from openai import OpenAI
 
@@ -302,6 +304,7 @@ elif api_choice == "anthropic":
     import anthropic
 
     client = anthropic.Anthropic(api_key=api_key_str)
+    max_tokens = 100000
 
 elif api_choice == "qwen":
     from openai import OpenAI
