@@ -96,7 +96,7 @@ def openai_harvard_reimbursed(text):
 # Glaude-3
 def anthropic(text):
     message = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-5-20250929",
         max_tokens=max_tokens,
         messages=[{"role": "user", "content": text}],
     )
