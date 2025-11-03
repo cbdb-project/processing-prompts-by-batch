@@ -153,7 +153,7 @@ def encode_image(image_path):
 def qwen_vl(img_path):
     base64_image = encode_image(img_path)
     completion = client.chat.completions.create(
-        model="qwen-vl-plus-latest",
+        model="qwen3-vl-plus",
         messages=[{
             "role": "user", 
             "content": [
