@@ -22,9 +22,14 @@ with open("api_key.txt", "r") as file:
 def gemini(text):
     # response = client.generate_content(text)
     response = client.models.generate_content(
-    model = gemini_model,
-    contents= text
-)
+        model=gemini_model,
+        contents=text,
+        # config=types.GenerateContentConfig(
+        #     temperature=0.7,
+        #     top_p=0.9,
+        #     response_modalities=["TEXT"], # thinking mode
+        # )
+    )
     # return to_markdown(response.text)
     return response.text
 
@@ -267,7 +272,7 @@ if api_choice == "gemini" or api_choice == "gemini_vl":
     from google import genai
     from google.genai import types
 
-    gemini_model = "gemini-2.0-flash"
+    gemini_model = "gemini-2.5-flash"
     client = genai.Client(api_key=api_key_str)
 elif api_choice == "deepseek":
     from openai import OpenAI
