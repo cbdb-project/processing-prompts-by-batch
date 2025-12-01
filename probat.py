@@ -283,12 +283,12 @@ elif api_choice == "openai":
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key_str)
-    model = "gpt-5"
+    model = "gpt-5.1"
     max_tokens = 30000
 elif api_choice == "openai_harvard":
     import requests
 
-    model = "gpt-5"
+    model = "gpt-5.1"
     max_tokens = 30000
     headers = {
         "api-key": api_key_str,
@@ -298,7 +298,7 @@ elif api_choice == "openai_harvard":
 elif api_choice == "openai_harvard_reimbursed":
     import requests
 
-    model = "gpt-5"
+    model = "gpt-5.1"
     max_tokens = 30000
     headers = {
         "api-key": api_key_str,
