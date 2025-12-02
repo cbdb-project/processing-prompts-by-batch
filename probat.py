@@ -4,6 +4,9 @@ import time
 import re
 import base64
 
+print("Program starting...")
+print(f"Start time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+
 # Configuration
 PROMPT_BATCH = 1  # number of prompts to concatenate with \n
 TEMP_BATCH_SIZE = 10 # number of prompts to generate in a single batch. Don't need to change this for most cases
