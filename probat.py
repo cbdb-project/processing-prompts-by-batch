@@ -6,6 +6,7 @@ import base64
 
 print("Program starting...")
 print(f"Start time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+start_time = time.time()
 
 # Configuration
 PROMPT_BATCH = 1  # number of prompts to concatenate with \n
@@ -438,3 +439,5 @@ else:
         with open("output.txt", "a", encoding="utf-8") as f:
             f.write(output_record + "\n")
 print("Finished all prompts")
+elapsed_time = time.time() - start_time
+print(f"Total time: {elapsed_time:.2f} seconds ({elapsed_time/60:.2f} minutes)")
