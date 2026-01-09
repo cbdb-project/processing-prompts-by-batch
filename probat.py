@@ -31,11 +31,18 @@ def gemini(text):
         # config=types.GenerateContentConfig(
         #     temperature=0.7,
         #     top_p=0.9,
-        #     response_modalities=["TEXT"], # thinking mode
+        #     thinking_config=types.ThinkingConfig(
+        #         thinking_budget=1024  # 0 means no thinking
+        #     )
         # )
     )
-    # return to_markdown(response.text)
-    return response.text
+    # Extract only text parts from the response to avoid warnings about non-text parts
+    text_parts = []
+    for candidate in response.candidates:
+        for part in candidate.content.parts:
+            if hasattr(part, 'text') and part.text:
+                text_parts.append(part.text)
+    return ''.join(text_parts) if text_parts else response.text
 
 
 ## Deepseek V3
@@ -102,14 +109,18 @@ def openai_harvard_reimbursed(text):
     response_json = response.json()
     return response_json["choices"][0]["message"]["content"]
 
-# Glaude-3
+# Claude
 def anthropic(text):
-    message = client.messages.create(
+    # Use streaming to avoid timeout errors for long requests
+    full_response = ""
+    with client.messages.stream(
         model="claude-sonnet-4-5-20250929",
         max_tokens=max_tokens,
         messages=[{"role": "user", "content": text}],
-    )
-    return message.content[0].text
+    ) as stream:
+        for text_chunk in stream.text_stream:
+            full_response += text_chunk
+    return full_response
 
 
 # gpt4free
@@ -185,7 +196,13 @@ def gemini_vl(img_path):
             types.Part.from_bytes(data=image_data, mime_type="image/png")
         ]
     )
-    return response.text
+    # Extract only text parts from the response to avoid warnings about non-text parts
+    text_parts = []
+    for candidate in response.candidates:
+        for part in candidate.content.parts:
+            if hasattr(part, 'text') and part.text:
+                text_parts.append(part.text)
+    return ''.join(text_parts) if text_parts else response.text
 
 def clean_text(text):
     text = text.replace("\n", "<br />")
@@ -276,7 +293,7 @@ if api_choice == "gemini" or api_choice == "gemini_vl":
     from google import genai
     from google.genai import types
 
-    gemini_model = "gemini-2.5-flash"
+    gemini_model = "gemini-flash-latest"
     client = genai.Client(api_key=api_key_str)
 elif api_choice == "deepseek":
     from openai import OpenAI
@@ -313,7 +330,7 @@ elif api_choice == "anthropic":
     import anthropic
 
     client = anthropic.Anthropic(api_key=api_key_str)
-    max_tokens = 100000
+    max_tokens = 64000
 
 elif api_choice == "qwen":
     from openai import OpenAI
