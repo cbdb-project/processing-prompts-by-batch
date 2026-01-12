@@ -17,63 +17,75 @@ SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 7500
 # api_choice: gemini, deepseek, openai, openai_harvard, openai_harvard_reimbursed, anthropic, call_g4f, qwen, volcengine, qwen_vl, gemini_vl...
 api_choice = "deepseek"
+# Thinking configuration
+# Harvard OpenAI Direct may not support reasoning parameter yet
+ENABLE_THINKING = True  # Set to True to enable thinking mode, False to disable (default)
 
 with open("api_key.txt", "r") as file:
     api_key_str = file.read()
 
 
+# Helper function to format response with reasoning
+def format_with_reasoning(reasoning, content):
+    """Format response with reasoning content if available."""
+    if reasoning:
+        return f"[Reasoning]\n{reasoning}\n\n[Answer]\n{content}"
+    return content
+
+
 ## Google Gemini
 def gemini(text):
-    # response = client.generate_content(text)
+    # Model-specific configuration
+    temperature = 0.7
+    top_p = 0.9
+    thinking_budget = 1024  # Token budget for thinking mode
+
+    # Build config with thinking control
+    config = types.GenerateContentConfig(
+        temperature=temperature,
+        top_p=top_p,
+        thinking_config=types.ThinkingConfig(
+            thinking_budget=thinking_budget if ENABLE_THINKING else 0
+        )
+    )
+
     response = client.models.generate_content(
         model=gemini_model,
         contents=text,
-        # config=types.GenerateContentConfig(
-        #     temperature=0.7,
-        #     top_p=0.9,
-        #     thinking_config=types.ThinkingConfig(
-        #         thinking_budget=1024  # 0 means no thinking
-        #     )
-        # )
+        config=config
     )
-    # Extract only text parts from the response to avoid warnings about non-text parts
+
+    # Extract text parts and check for thinking content
     text_parts = []
+    thinking_parts = []
     for candidate in response.candidates:
         for part in candidate.content.parts:
-            if hasattr(part, 'text') and part.text:
+            if hasattr(part, 'thought') and part.thought and ENABLE_THINKING:
+                thinking_parts.append(part.text)
+            elif hasattr(part, 'text') and part.text:
                 text_parts.append(part.text)
-    return ''.join(text_parts) if text_parts else response.text
+
+    result = ''.join(text_parts) if text_parts else response.text
+    reasoning = ''.join(thinking_parts) if ENABLE_THINKING and thinking_parts else None
+    return format_with_reasoning(reasoning, result)
 
 
 ## Deepseek V3
 def deepseek(text):
     response = client.chat.completions.create(
-        model="deepseek-chat",
-        messages=[
-            {"role": "user", "content": text},
-        ],
-        max_tokens= max_tokens,
-        # temperature =  0.7,
-        # top_p = 0.1,
+        model=deepseek_model,
+        messages=[{"role": "user", "content": text}],
+        max_tokens=max_tokens,
     )
-    return response.choices[0].message.content
+
+    message = response.choices[0].message
+    reasoning = message.reasoning_content if (ENABLE_THINKING and hasattr(message, 'reasoning_content')) else None
+    return format_with_reasoning(reasoning, message.content)
 
 def opneai(text):
-    response = client.chat.completions.create(
-        model= model,
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": text},
-        ],
-        max_tokens= max_tokens,
-        # temperature =  0.7,
-        # top_p = 0.1,
-    )
-    return response.choices[0].message.content
+    # Reasoning effort: "none" (default for gpt-5.2), "low", "medium", "high"
+    reasoning_effort = "medium" if ENABLE_THINKING else "none"
 
-
-## OpenAI Harvard
-def openai_harvard(text):
     payload = {
         "model": model,
         "messages": [
@@ -81,46 +93,99 @@ def openai_harvard(text):
             {"role": "user", "content": text},
         ],
         "max_tokens": max_tokens,
-        # "temperature": 0.7,
-        # "top_p": 0.1,
     }
+
+    # Add reasoning config for models that support it (o-series and gpt-5+)
+    if model.startswith("o") or model.startswith("gpt-5"):
+        payload["reasoning"] = {"effort": reasoning_effort}
+
+    response = client.chat.completions.create(**payload)
+    message = response.choices[0].message
+    reasoning = message.reasoning if (ENABLE_THINKING and hasattr(message, 'reasoning')) else None
+    return format_with_reasoning(reasoning, message.content)
+
+
+## OpenAI Harvard
+def openai_harvard(text):
+    # Reasoning effort: "none" (default for gpt-5.2), "low", "medium", "high"
+    reasoning_effort = "medium" if ENABLE_THINKING else "none"
+
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": text},
+        ],
+        "max_tokens": max_tokens,
+    }
+
+    # Add reasoning config for models that support it (o-series and gpt-5+)
+    if model.startswith("o") or model.startswith("gpt-5"):
+        payload["reasoning"] = {"effort": reasoning_effort}
+
     response = requests.post(
         "https://go.apis.huit.harvard.edu/ais-openai-direct/v1/chat/completions",
         headers=headers,
         json=payload,
     )
-    response_json = response.json()
-    # print(response_json)
-    return response_json["choices"][0]["message"]["content"]
+    message = response.json()["choices"][0]["message"]
+    reasoning = message.get("reasoning") if ENABLE_THINKING else None
+    return format_with_reasoning(reasoning, message["content"])
 
 # OpenAI Harvard Reimbursed
 def openai_harvard_reimbursed(text):
+    # Harvard API may not support reasoning parameter yet
     payload = {
         "model": model,
-        "messages": [
-            {"role": "user", "content": text},
-        ],
+        "messages": [{"role": "user", "content": text}],
+        "max_tokens": max_tokens,
     }
+
+    # Note: reasoning parameter is not supported by Harvard's API endpoint
+    # If needed in the future, uncomment the following:
+    # if ENABLE_THINKING and model.startswith("o"):
+    #     payload["reasoning"] = {"effort": "medium"}
+
     response = requests.post(
         "https://go.apis.huit.harvard.edu/ais-openai-direct-limited-schools/v1/chat/completions",
         headers=headers,
         json=payload,
     )
-    response_json = response.json()
-    return response_json["choices"][0]["message"]["content"]
+
+    # Check for errors in response
+    response_data = response.json()
+    if "choices" not in response_data:
+        print(f"API Error Response: {response_data}")
+        raise Exception(f"API returned error: {response_data.get('error', {}).get('message', 'Unknown error')}")
+
+    message = response_data["choices"][0]["message"]
+    return message["content"]
 
 # Claude
 def anthropic(text):
+    # Claude supports extended thinking with the thinking parameter
+    thinking_config = {"type": "enabled", "budget_tokens": 10000} if ENABLE_THINKING else {"type": "disabled"}
+
     # Use streaming to avoid timeout errors for long requests
     full_response = ""
+    thinking_content = ""
+
     with client.messages.stream(
         model="claude-sonnet-4-5-20250929",
         max_tokens=max_tokens,
         messages=[{"role": "user", "content": text}],
+        thinking=thinking_config,
     ) as stream:
-        for text_chunk in stream.text_stream:
-            full_response += text_chunk
-    return full_response
+        for event in stream:
+            if hasattr(event, 'type'):
+                if event.type == "content_block_delta":
+                    if hasattr(event.delta, 'type'):
+                        if event.delta.type == "thinking_delta" and ENABLE_THINKING:
+                            thinking_content += event.delta.thinking
+                        elif event.delta.type == "text_delta":
+                            full_response += event.delta.text
+
+    return format_with_reasoning(thinking_content if thinking_content else None, full_response)
 
 
 # gpt4free
@@ -147,7 +212,7 @@ def call_g4f(text, max_retries=3, retry_delay=5):
 
 def qwen(text):
     completion = client.chat.completions.create(
-        model="qwen3-235b-a22b-instruct-2507",
+        model=qwen_model,
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": text},
@@ -155,17 +220,27 @@ def qwen(text):
         temperature=0.8,
         top_p=0.8,
     )
-    return completion.choices[0].message.content
+
+    message = completion.choices[0].message
+    # QwQ model may include reasoning in the response, try to extract it
+    reasoning = None
+    if ENABLE_THINKING and hasattr(message, 'reasoning'):
+        reasoning = message.reasoning
+
+    return format_with_reasoning(reasoning, message.content)
 
 def volcengine(text):
     response = client.chat.completions.create(
-        model="deepseek-v3-241226",
+        model=volcengine_model,
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": text},
         ],
     )
-    return response.choices[0].message.content
+
+    message = response.choices[0].message
+    reasoning = message.reasoning_content if (ENABLE_THINKING and hasattr(message, 'reasoning_content')) else None
+    return format_with_reasoning(reasoning, message.content)
 
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
@@ -293,22 +368,27 @@ if api_choice == "gemini" or api_choice == "gemini_vl":
     from google import genai
     from google.genai import types
 
+    # Model selection - gemini supports thinking via thinking_config parameter
     gemini_model = "gemini-flash-latest"
     client = genai.Client(api_key=api_key_str)
 elif api_choice == "deepseek":
     from openai import OpenAI
 
+    # Model selection based on ENABLE_THINKING
+    deepseek_model = "deepseek-reasoner" if ENABLE_THINKING else "deepseek-chat"
     client = OpenAI(api_key=api_key_str, base_url="https://api.deepseek.com/")
     max_tokens = 7500
 elif api_choice == "openai":
     from openai import OpenAI
 
+    # Model selection - reasoning is configured via payload in opneai() function
     client = OpenAI(api_key=api_key_str)
     model = "gpt-5.2"
     max_tokens = 30000
 elif api_choice == "openai_harvard":
     import requests
 
+    # Model selection - reasoning is configured via payload in openai_harvard() function
     model = "gpt-5.2"
     max_tokens = 30000
     headers = {
@@ -319,6 +399,7 @@ elif api_choice == "openai_harvard":
 elif api_choice == "openai_harvard_reimbursed":
     import requests
 
+    # Model selection - currently no reasoning support for Harvard reimbursed API
     model = "gpt-5.2"
     max_tokens = 30000
     headers = {
@@ -329,12 +410,15 @@ elif api_choice == "openai_harvard_reimbursed":
 elif api_choice == "anthropic":
     import anthropic
 
+    # Model selection - thinking is configured via thinking parameter in anthropic() function
     client = anthropic.Anthropic(api_key=api_key_str)
     max_tokens = 64000
 
 elif api_choice == "qwen":
     from openai import OpenAI
 
+    # Model selection based on ENABLE_THINKING (QwQ for reasoning, qwen3 for standard)
+    qwen_model = "qwq-32b-preview" if ENABLE_THINKING else "qwen3-235b-a22b-instruct-2507"
     os.environ["DASHSCOPE_API_KEY"] = api_key_str
     client = OpenAI(
         api_key=os.getenv("DASHSCOPE_API_KEY"),
@@ -343,6 +427,8 @@ elif api_choice == "qwen":
 elif api_choice == "volcengine":
     from openai import OpenAI
 
+    # Model selection based on ENABLE_THINKING
+    volcengine_model = "deepseek-reasoner" if ENABLE_THINKING else "deepseek-chat"
     os.environ["ARK_API_KEY"] = api_key_str
     client = OpenAI(
         api_key=os.getenv("ARK_API_KEY"),
@@ -351,10 +437,12 @@ elif api_choice == "volcengine":
 elif api_choice == "call_g4f":
     from g4f.client import Client
 
+    # Model selection - g4f uses fixed model, no thinking mode support
     client = Client()
 elif api_choice == "qwen_vl":
     from openai import OpenAI
 
+    # Model selection - vision model doesn't support thinking mode
     os.environ["QWEN_VL_API_KEY"] = api_key_str
     client = OpenAI(
         api_key=os.getenv("QWEN_VL_API_KEY"),
