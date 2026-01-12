@@ -19,7 +19,7 @@ LEN_THRESHOLD = 7500
 api_choice = "deepseek"
 # Thinking configuration
 # Harvard OpenAI Direct may not support reasoning parameter yet
-ENABLE_THINKING = True  # Set to True to enable thinking mode, False to disable (default)
+ENABLE_THINKING = False  # Set to True to enable thinking mode, False to disable (default)
 
 with open("api_key.txt", "r") as file:
     api_key_str = file.read()
