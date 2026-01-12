@@ -44,6 +44,7 @@ def gemini(text):
     config = types.GenerateContentConfig(
         temperature=temperature,
         top_p=top_p,
+        max_output_tokens=max_output_tokens,
         thinking_config=types.ThinkingConfig(
             thinking_budget=thinking_budget if ENABLE_THINKING else 0
         )
@@ -92,7 +93,7 @@ def opneai(text):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": text},
         ],
-        "max_tokens": max_tokens,
+        "max_completion_tokens": max_tokens,
     }
 
     # Add reasoning config for models that support it (o-series and gpt-5+)
@@ -116,7 +117,7 @@ def openai_harvard(text):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": text},
         ],
-        "max_tokens": max_tokens,
+        "max_completion_tokens": max_tokens,
     }
 
     # Add reasoning config for models that support it (o-series and gpt-5+)
@@ -138,7 +139,7 @@ def openai_harvard_reimbursed(text):
     payload = {
         "model": model,
         "messages": [{"role": "user", "content": text}],
-        "max_tokens": max_tokens,
+        "max_completion_tokens": max_tokens,
     }
 
     # Note: reasoning parameter is not supported by Harvard's API endpoint
@@ -217,6 +218,7 @@ def qwen(text):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": text},
         ],
+        max_tokens=max_tokens,
         temperature=0.8,
         top_p=0.8,
     )
@@ -236,6 +238,7 @@ def volcengine(text):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": text},
         ],
+        max_tokens=max_tokens,
     )
 
     message = response.choices[0].message
@@ -370,6 +373,7 @@ if api_choice == "gemini" or api_choice == "gemini_vl":
 
     # Model selection - gemini supports thinking via thinking_config parameter
     gemini_model = "gemini-flash-latest"
+    max_output_tokens = 8000  # Maximum output tokens for Gemini
     client = genai.Client(api_key=api_key_str)
 elif api_choice == "deepseek":
     from openai import OpenAI
@@ -419,6 +423,7 @@ elif api_choice == "qwen":
 
     # Model selection based on ENABLE_THINKING (QwQ for reasoning, qwen3 for standard)
     qwen_model = "qwq-32b-preview" if ENABLE_THINKING else "qwen3-235b-a22b-instruct-2507"
+    max_tokens = 8000  # Maximum output tokens for Qwen
     os.environ["DASHSCOPE_API_KEY"] = api_key_str
     client = OpenAI(
         api_key=os.getenv("DASHSCOPE_API_KEY"),
@@ -429,6 +434,7 @@ elif api_choice == "volcengine":
 
     # Model selection based on ENABLE_THINKING
     volcengine_model = "deepseek-reasoner" if ENABLE_THINKING else "deepseek-chat"
+    max_tokens = 7500  # Maximum output tokens for Volcengine (same as DeepSeek)
     os.environ["ARK_API_KEY"] = api_key_str
     client = OpenAI(
         api_key=os.getenv("ARK_API_KEY"),
