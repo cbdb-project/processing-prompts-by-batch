@@ -135,11 +135,17 @@ def openai_harvard(text):
 
 # OpenAI Harvard Reimbursed
 def openai_harvard_reimbursed(text):
+    # Model-specific configuration
+    # temperature = 0.7
+    # top_p = 0.9
+
     # Harvard API may not support reasoning parameter yet
     payload = {
         "model": model,
         "messages": [{"role": "user", "content": text}],
         "max_completion_tokens": max_tokens,
+        # "temperature": temperature,
+        # "top_p": top_p,
     }
 
     # Note: reasoning parameter is not supported by Harvard's API endpoint
@@ -387,7 +393,7 @@ elif api_choice == "openai":
 
     # Model selection - reasoning is configured via payload in opneai() function
     client = OpenAI(api_key=api_key_str)
-    model = "gpt-5.2"
+    model = "gpt-5.3"
     max_tokens = 30000
 elif api_choice == "openai_harvard":
     import requests
