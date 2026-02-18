@@ -135,23 +135,20 @@ def openai_harvard(text):
 
 # OpenAI Harvard Reimbursed
 def openai_harvard_reimbursed(text):
-    # Model-specific configuration
-    # temperature = 0.7
-    # top_p = 0.9
-
-    # Harvard API may not support reasoning parameter yet
     payload = {
         "model": model,
         "messages": [{"role": "user", "content": text}],
         "max_completion_tokens": max_tokens,
-        # "temperature": temperature,
-        # "top_p": top_p,
     }
 
-    # Note: reasoning parameter is not supported by Harvard's API endpoint
-    # If needed in the future, uncomment the following:
-    # if ENABLE_THINKING and model.startswith("o"):
-    #     payload["reasoning"] = {"effort": "medium"}
+    if ENABLE_THINKING:
+        # Reasoning models don't support temperature/top_p
+        # Chat Completions API uses reasoning_effort (top-level string), not reasoning: {effort: ...}
+        payload["reasoning_effort"] = "medium"  # low, medium, or high
+
+    # Uncomment the following lines to set temperature and top_p (not compatible with reasoning mode)
+    # payload["temperature"] = 0.7
+    # payload["top_p"] = 0.9
 
     response = requests.post(
         "https://go.apis.huit.harvard.edu/ais-openai-direct-limited-schools/v1/chat/completions",
@@ -166,7 +163,8 @@ def openai_harvard_reimbursed(text):
         raise Exception(f"API returned error: {response_data.get('error', {}).get('message', 'Unknown error')}")
 
     message = response_data["choices"][0]["message"]
-    return message["content"]
+    reasoning = message.get("reasoning") if ENABLE_THINKING else None
+    return format_with_reasoning(reasoning, message["content"])
 
 # Claude
 def anthropic(text):
@@ -409,7 +407,7 @@ elif api_choice == "openai_harvard":
 elif api_choice == "openai_harvard_reimbursed":
     import requests
 
-    # Model selection - currently no reasoning support for Harvard reimbursed API
+    # Model selection - reasoning is configured via payload in openai_harvard_reimbursed() function
     model = "gpt-5.2"
     max_tokens = 30000
     headers = {
