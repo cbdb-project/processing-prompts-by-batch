@@ -253,19 +253,75 @@ def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
+def get_image_mime_type(image_path):
+    ext = os.path.splitext(image_path)[1].lower()
+    mime_types = {
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png",
+        ".gif": "image/gif",
+        ".webp": "image/webp",
+        ".bmp": "image/bmp",
+    }
+    return mime_types.get(ext, "application/octet-stream")
+
+def extract_text_from_response(response):
+    if isinstance(response, str):
+        return response
+
+    if isinstance(response, dict):
+        if "choices" in response and response["choices"]:
+            return extract_text_from_response(response["choices"][0])
+        if "message" in response:
+            return extract_text_from_response(response["message"])
+        if "content" in response:
+            return extract_text_from_response(response["content"])
+        if "text" in response:
+            return response["text"]
+
+    choices = getattr(response, "choices", None)
+    if choices:
+        return extract_text_from_response(choices[0])
+
+    message = getattr(response, "message", None)
+    if message is not None:
+        return extract_text_from_response(message)
+
+    content = getattr(response, "content", None)
+    if content is not None:
+        return extract_text_from_response(content)
+
+    text = getattr(response, "text", None)
+    if text is not None:
+        return text
+
+    if isinstance(response, list):
+        text_parts = []
+        for item in response:
+            extracted = extract_text_from_response(item)
+            if extracted:
+                text_parts.append(extracted)
+        return "".join(text_parts)
+
+    if hasattr(response, "model_dump"):
+        return extract_text_from_response(response.model_dump())
+
+    raise TypeError(f"Unsupported response format: {type(response).__name__}")
+
 def qwen_vl(img_path):
     base64_image = encode_image(img_path)
+    mime_type = get_image_mime_type(img_path)
     completion = client.chat.completions.create(
         model="qwen3-vl-plus",
         messages=[{
             "role": "user", 
             "content": [
                 {"type": "text", "text": prompt_prefix},
-                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{base64_image}"}}
             ]
         }]
     )
-    return completion.choices[0].message.content
+    return extract_text_from_response(completion)
 
 def gemini_vl(img_path):
     with open(img_path, "rb") as image_file:
