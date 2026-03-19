@@ -83,7 +83,7 @@ def deepseek(text):
     reasoning = message.reasoning_content if (ENABLE_THINKING and hasattr(message, 'reasoning_content')) else None
     return format_with_reasoning(reasoning, message.content)
 
-def opneai(text):
+def openai(text):
     # Reasoning effort: "none" (default for gpt-5.2), "low", "medium", "high"
     reasoning_effort = "medium" if ENABLE_THINKING else "none"
 
@@ -225,15 +225,11 @@ def qwen(text):
         max_tokens=max_tokens,
         temperature=0.8,
         top_p=0.8,
+        extra_body={"enable_thinking": ENABLE_THINKING},
     )
 
     message = completion.choices[0].message
-    # QwQ model may include reasoning in the response, try to extract it
-    reasoning = None
-    if ENABLE_THINKING and hasattr(message, 'reasoning'):
-        reasoning = message.reasoning
-
-    return format_with_reasoning(reasoning, message.content)
+    return message.content
 
 def volcengine(text):
     response = client.chat.completions.create(
@@ -415,7 +411,7 @@ def llm_api(text, api_choice):
 api_functions = {
     "gemini": gemini,
     "deepseek": deepseek,
-    "openai": opneai,
+    "openai": openai,
     "openai_harvard": openai_harvard,
     "anthropic": anthropic,
     "call_g4f": call_g4f,
@@ -481,9 +477,9 @@ elif api_choice == "anthropic":
 elif api_choice == "qwen":
     from openai import OpenAI
 
-    # Model selection based on ENABLE_THINKING (QwQ for reasoning, qwen3 for standard)
-    qwen_model = "qwq-32b-preview" if ENABLE_THINKING else "qwen3-235b-a22b-instruct-2507"
-    max_tokens = 8000  # Maximum output tokens for Qwen
+    # Qwen3.5-Plus: 1M context, 65536 max output, thinking mode supported via enable_thinking
+    qwen_model = "qwen3.5-plus"
+    max_tokens = 16000  # Maximum output tokens for Qwen (model supports up to 65536)
     os.environ["DASHSCOPE_API_KEY"] = api_key_str
     client = OpenAI(
         api_key=os.getenv("DASHSCOPE_API_KEY"),
