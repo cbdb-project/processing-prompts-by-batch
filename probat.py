@@ -308,7 +308,7 @@ def qwen_vl(img_path):
     base64_image = encode_image(img_path)
     mime_type = get_image_mime_type(img_path)
     completion = client.chat.completions.create(
-        model="qwen3-vl-plus",
+        model=qwen_model,
         messages=[{
             "role": "user", 
             "content": [
@@ -474,10 +474,10 @@ elif api_choice == "anthropic":
     client = anthropic.Anthropic(api_key=api_key_str)
     max_tokens = 64000
 
-elif api_choice == "qwen":
+elif api_choice in ("qwen", "qwen_vl"):
     from openai import OpenAI
 
-    # Qwen3.5-Plus: 1M context, 65536 max output, thinking mode supported via enable_thinking
+    # Qwen3.5-Plus: 1M context, 65536 max output, supports both text and vision natively
     qwen_model = "qwen3.5-plus"
     max_tokens = 16000  # Maximum output tokens for Qwen (model supports up to 65536)
     os.environ["DASHSCOPE_API_KEY"] = api_key_str
@@ -501,15 +501,7 @@ elif api_choice == "call_g4f":
 
     # Model selection - g4f uses fixed model, no thinking mode support
     client = Client()
-elif api_choice == "qwen_vl":
-    from openai import OpenAI
-
-    # Model selection - vision model doesn't support thinking mode
-    os.environ["QWEN_VL_API_KEY"] = api_key_str
-    client = OpenAI(
-        api_key=os.getenv("QWEN_VL_API_KEY"),
-        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-    )
+# qwen_vl is now handled together with qwen above (both use qwen3.5-plus)
 
 if os.path.exists("output.txt"):
     os.remove("output.txt")
