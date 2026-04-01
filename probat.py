@@ -443,13 +443,13 @@ elif api_choice == "openai":
 
     # Model selection - reasoning is configured via payload in opneai() function
     client = OpenAI(api_key=api_key_str)
-    model = "gpt-5.3"
+    model = "gpt-5.4"
     max_tokens = 30000
 elif api_choice == "openai_harvard":
     import requests
 
     # Model selection - reasoning is configured via payload in openai_harvard() function
-    model = "gpt-5.2"
+    model = "gpt-5.4"
     max_tokens = 30000
     headers = {
         "api-key": api_key_str,
@@ -460,7 +460,7 @@ elif api_choice == "openai_harvard_reimbursed":
     import requests
 
     # Model selection - reasoning is configured via payload in openai_harvard_reimbursed() function
-    model = "gpt-5.2"
+    model = "gpt-5.4"
     max_tokens = 30000
     headers = {
         "api-key": api_key_str,
