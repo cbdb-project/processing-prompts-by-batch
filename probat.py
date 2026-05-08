@@ -125,7 +125,7 @@ def openai_harvard(text):
         payload["reasoning"] = {"effort": reasoning_effort}
 
     response = requests.post(
-        "https://go.apis.huit.harvard.edu/ais-openai-direct/v1/chat/completions",
+        "https://apis.huit.harvard.edu/ais-openai-direct/v2/chat/completions",
         headers=headers,
         json=payload,
     )
@@ -454,7 +454,6 @@ elif api_choice == "openai_harvard":
     headers = {
         "api-key": api_key_str,
         "Content-Type": "application/json",
-        "Accept-Encoding": "gzip, deflate, identity",
     }
 elif api_choice == "openai_harvard_reimbursed":
     import requests
@@ -465,7 +464,6 @@ elif api_choice == "openai_harvard_reimbursed":
     headers = {
         "api-key": api_key_str,
         "Content-Type": "application/json",
-        "Accept-Encoding": "gzip, deflate, identity",
     }
 elif api_choice == "anthropic":
     import anthropic
