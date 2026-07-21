@@ -475,8 +475,9 @@ elif api_choice == "anthropic":
 elif api_choice in ("qwen", "qwen_vl"):
     from openai import OpenAI
 
-    # Qwen3.5-Plus: 1M context, 65536 max output, supports both text and vision natively
-    qwen_model = "qwen3.5-plus"
+    # Qwen3.7-Max: strongest Qwen model currently accessible with this API key
+    # (qwen3.8-max does not exist; qwen3.8-max-preview exists but is access-denied for this key)
+    qwen_model = "qwen3.7-max"
     max_tokens = 16000  # Maximum output tokens for Qwen (model supports up to 65536)
     os.environ["DASHSCOPE_API_KEY"] = api_key_str
     client = OpenAI(
