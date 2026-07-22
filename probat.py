@@ -16,7 +16,7 @@ TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 7500
 # api_choice: gemini, deepseek, openai, openai_harvard, openai_harvard_reimbursed, anthropic, call_g4f, qwen, volcengine, qwen_vl, gemini_vl...
-api_choice = "deepseek"
+api_choice = "qwen"
 # Thinking configuration
 # Harvard OpenAI Direct may not support reasoning parameter yet
 ENABLE_THINKING = False  # Set to True to enable thinking mode, False to disable (default)
@@ -308,9 +308,9 @@ def qwen_vl(img_path):
     base64_image = encode_image(img_path)
     mime_type = get_image_mime_type(img_path)
     completion = client.chat.completions.create(
-        model=qwen_model,
+        model=qwen_vl_model,
         messages=[{
-            "role": "user", 
+            "role": "user",
             "content": [
                 {"type": "text", "text": prompt_prefix},
                 {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{base64_image}"}}
@@ -477,7 +477,10 @@ elif api_choice in ("qwen", "qwen_vl"):
 
     # Qwen3.7-Max: strongest Qwen model currently accessible with this API key
     # (qwen3.8-max does not exist; qwen3.8-max-preview exists but is access-denied for this key)
+    # qwen3.7-max is text-only (per Alibaba Cloud docs); qwen3.7-plus is its
+    # multimodal sibling and is required for image input (qwen_vl).
     qwen_model = "qwen3.7-max"
+    qwen_vl_model = "qwen3.7-plus"
     max_tokens = 16000  # Maximum output tokens for Qwen (model supports up to 65536)
     os.environ["DASHSCOPE_API_KEY"] = api_key_str
     client = OpenAI(
