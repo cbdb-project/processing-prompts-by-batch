@@ -16,7 +16,7 @@ TIMEOUT_OFFSET = 0.5
 SEPARATOR_LIST = [".", "。", ",", ", ", "\\n", "\n"]
 LEN_THRESHOLD = 7500
 # api_choice: gemini, deepseek, openai, openai_harvard, openai_harvard_reimbursed, anthropic, call_g4f, qwen, volcengine, qwen_vl, gemini_vl...
-api_choice = "qwen"
+api_choice = "deepseek"
 # Thinking configuration
 # Harvard OpenAI Direct may not support reasoning parameter yet
 ENABLE_THINKING = False  # Set to True to enable thinking mode, False to disable (default)
